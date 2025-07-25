@@ -1,0 +1,72 @@
+body{
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+main {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0f23 0%, #1e1e3f 60%, #2d1b69 100%);
+}
+
+.hero h2{
+    font-size: 3rem;
+    font-weight: bolder;
+    padding: 10px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin: 20px 0;
+}
+
+.hero button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    width: 200px;
+    font-weight: bold;
+}
+
+.hero button:hover {
+    background: rgba(124, 58, 237, 0.2);
+    border-color: #8b5cf6;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+    transform: translateY(-2px);
+}
+
+.crypto-dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    
+}
+
+.crypto-dashboard h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.crypto-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.crypto-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
