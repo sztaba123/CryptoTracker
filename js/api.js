@@ -24,8 +24,10 @@ function fetchCryptoData() {
             if (btcData) updateCryptoCard('bitcoin', btcData);
             if (ethData) updateCryptoCard('ethereum', ethData);
             if (bnbData) updateCryptoCard('bnb', bnbData);
+            
         })
         .catch(error => console.error('Error fetching crypto data:', error));
+        
 }
 
 function updateCryptoCard(cryptoId, data) {

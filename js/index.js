@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (loginContainer) {
         loginContainer.classList.add('hide');
         loginContainer.classList.remove('show');
+        loginContainer.style.display = 'none'; // Dodatkowe zabezpieczenie
     }
 
     // Otwórz modal po kliknięciu Login
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (loginContainer) {
                 loginContainer.classList.remove('hide');
                 loginContainer.classList.add('show');
+                loginContainer.style.display = ''; // Usuń inline style
                 document.body.style.overflow = 'hidden';
                 console.log('Modal opened');
             }
@@ -67,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (loginContainer) {
             loginContainer.classList.add('hide');
             loginContainer.classList.remove('show');
+            loginContainer.style.display = 'none'; // Dodatkowe zabezpieczenie
             document.body.style.overflow = 'auto';
             console.log('Modal closed');
         }
