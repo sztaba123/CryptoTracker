@@ -53,6 +53,9 @@ function updateCryptoCard(cryptoId, data) {
     }
 }
 
+
+
+
 // Uruchomienie przy załadowaniu strony
 window.addEventListener('load', () => {
     fetchCryptoData();
