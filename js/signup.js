@@ -91,3 +91,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Register modal data
+
+const registerModalData = {
+    username: '',
+    email: '',
+    password: ''
+}
+
+//take data from register modal submit
+
+document.querySelector('.register-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('reg-username').value;
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    
+    registerModalData.username = username;
+    registerModalData.email = email;
+    registerModalData.password = password;
+
+    console.log('Register modal data:', registerModalData);
+});
+
+
+
+
