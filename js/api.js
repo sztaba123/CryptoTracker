@@ -1,10 +1,41 @@
 const URL = "https://api4.binance.com/api/v3/ticker/24hr";
 
+// Mapping crypto names to Binance symbols
+const cryptoMapping = {
+    'bitcoin': 'BTCUSDT',
+    'ethereum': 'ETHUSDT',
+    'cardano': 'ADAUSDT',
+    'solana': 'SOLUSDT',
+    'dogecoin': 'DOGEUSDT',
+    'bnb': 'BNBUSDT'
+};
+
 function checkIsUSDT(symbol) {
     if (symbol.endsWith('USDT')) {
         return true;
     }
     return false;
+}
+
+// New function for individual crypto price fetching
+async function fetchCryptoPrice(cryptoName) {
+    try {
+        const symbol = cryptoMapping[cryptoName];
+        if (!symbol) {
+            throw new Error(`Symbol not found for ${cryptoName}`);
+        }
+        
+        const response = await fetch(`${URL}?symbol=${symbol}`);
+        const data = await response.json();
+        
+        return {
+            price: parseFloat(data.lastPrice),
+            change24h: parseFloat(data.priceChangePercent)
+        };
+    } catch (error) {
+        console.error(`Error fetching ${cryptoName} price:`, error);
+        return null;
+    }
 }
 
 // Pobieranie danych dla konkretnych kryptowalut
@@ -21,16 +52,16 @@ function fetchCryptoData() {
             const bnbData = data.find(item => item.symbol === 'BNBUSDT');
             
             // Aktualizuj karty kryptowalut
-            if (btcData) updateCryptoCard('bitcoin', btcData);
-            if (ethData) updateCryptoCard('ethereum', ethData);
-            if (bnbData) updateCryptoCard('bnb', bnbData);
+            if (btcData) updateCryptoCardOld('bitcoin', btcData);
+            if (ethData) updateCryptoCardOld('ethereum', ethData);
+            if (bnbData) updateCryptoCardOld('bnb', bnbData);
             
         })
         .catch(error => console.error('Error fetching crypto data:', error));
         
 }
 
-function updateCryptoCard(cryptoId, data) {
+function updateCryptoCardOld(cryptoId, data) {
     const priceElement = document.querySelector(`#${cryptoId} .price`);
     const changeElement = document.querySelector(`#${cryptoId} .change`);
     

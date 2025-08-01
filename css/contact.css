@@ -1,0 +1,87 @@
+/* Contact Page Styles */
+
+.contact-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.contact-card:hover {
+    background: rgba(124, 58, 237, 0.15);
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    transform: translateY(-3px);
+}
+
+.contact-form-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.contact-form-card:hover {
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+/* Form styling */
+.form-control {
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background-color: rgba(45, 45, 75, 0.8) !important;
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 0 0.25rem rgba(124, 58, 237, 0.25) !important;
+    color: white !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Contact icons animation */
+.contact-card i {
+    transition: all 0.3s ease;
+}
+
+.contact-card:hover i {
+    transform: scale(1.1);
+}
+
+/* Button styling */
+.contact-form-card .btn-primary {
+    background: rgba(124, 58, 237, 0.8);
+    border: 2px solid rgba(124, 58, 237, 0.6);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.contact-form-card .btn-primary:hover {
+    background: rgba(124, 58, 237, 1);
+    border-color: #8b5cf6;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .contact-card {
+        margin-bottom: 1rem;
+    }
+    
+    .contact-form-card {
+        padding: 1.5rem !important;
+    }
+    
+    .hero h2 {
+        font-size: 2rem;
+    }
+    
+    .contact-card h5 {
+        font-size: 1.1rem;
+    }
+}

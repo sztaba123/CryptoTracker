@@ -66,7 +66,220 @@ main {
     backdrop-filter: blur(10px);
     border-radius: 10px;
     padding: 20px;
-    width: 300px;
     text-align: center;
     transition: all 0.3s ease;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.crypto-card:hover {
+    background: rgba(124, 58, 237, 0.15);
+    border-color: #8b5cf6;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    transform: translateY(-3px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero h2 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .hero button {
+        width: 100%;
+        max-width: 250px;
+    }
+    
+    .crypto-dashboard h3 {
+        font-size: 1.5rem;
+    }
+    
+    .crypto-card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero {
+        padding: 2rem 1rem !important;
+    }
+    
+    .hero h2 {
+        font-size: 1.75rem;
+    }
+    
+    .crypto-dashboard {
+        padding: 1rem;
+    }
+    
+    .crypto-card {
+        padding: 15px;
+    }
+}
+
+/* New Sections Styles */
+
+/* Features Section */
+.feature-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    background: rgba(124, 58, 237, 0.15);
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    transform: translateY(-5px);
+}
+
+.feature-card i {
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover i {
+    transform: scale(1.1);
+}
+
+/* Market Stats */
+.stats-overview {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.stats-overview:hover {
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+.stat-item {
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+}
+
+.stat-item i {
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover i {
+    transform: scale(1.2);
+}
+
+/* Trending Cards */
+.trending-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.trending-card:hover {
+    background: rgba(124, 58, 237, 0.15);
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    transform: translateY(-3px);
+}
+
+/* Testimonials */
+.testimonial-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+    background: rgba(124, 58, 237, 0.15);
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    transform: translateY(-3px);
+}
+
+.testimonial-card .avatar {
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover .avatar {
+    transform: scale(1.1);
+}
+
+/* CTA Section */
+.cta-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.cta-card:hover {
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+.cta-card i {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Section separators */
+.features-section::after,
+.market-stats::after,
+.trending-section::after,
+.testimonials::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.3), transparent);
+}
+
+.features-section,
+.market-stats,
+.trending-section,
+.testimonials {
+    position: relative;
+}
+
+/* Button animations */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Star ratings animation */
+.testimonial-card .bi-star-fill {
+    animation: twinkle 2s infinite;
+    animation-delay: calc(var(--i) * 0.1s);
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }

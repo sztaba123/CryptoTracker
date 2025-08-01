@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - CryptoTracker</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/register.css">
+    <link rel="stylesheet" href="css/about.css">
+    <link rel="stylesheet" href="css/alerts.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <!-- Logo + Brand (zawsze widoczne) -->
+                <div class="navbar-brand d-flex align-items-center">
+                    <i id="logo" class="bi bi-cash-coin text-light me-3"></i>
+                    <h1 class="mb-0">CryptoTracker</h1>
+                </div>
+                
+                <!-- Hamburger button (widoczny tylko na mobile) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Collapsible content -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <!-- Menu (centrum) -->
+                    <ul class="navbar-nav mx-auto text-center mb-3 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light active" href="about.html">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="contact.html">Contact</a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Login/Register buttons (prawa strona na desktop, wyśrodkowane na mobile) -->
+                    <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center justify-content-lg-start ms-lg-auto">
+                        <button class="btn me-lg-3 mb-2 mb-lg-0 login" id="login-btn">Login</button>
+                        <button class="btn sign-up" id="sign-up-btn">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero text-center p-4 p-md-5 text-light">
+            <div class="container">
+                <h2 class="display-4 display-md-3 mb-3">About CryptoTracker</h2>
+                <p class="lead mb-4">Your trusted partner in cryptocurrency tracking and analysis</p>
+            </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section class="mission-section py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="mission-card bg-dark text-white p-4 p-md-5 rounded border">
+                            <div class="text-center mb-4">
+                                <i class="bi bi-bullseye text-primary fs-1 mb-3"></i>
+                                <h3 class="text-white mb-4">Our Mission</h3>
+                            </div>
+                            <p class="lead text-center mb-4">
+                                At CryptoTracker, we believe that everyone should have access to professional-grade 
+                                cryptocurrency tracking tools. Our mission is to democratize crypto market analysis 
+                                and provide real-time insights that empower both beginners and experienced traders.
+                            </p>
+                            <div class="row g-4 mt-3">
+                                <div class="col-md-4 text-center">
+                                    <i class="bi bi-eye text-info fs-2 mb-3"></i>
+                                    <h5>Transparency</h5>
+                                    <p class="text-muted">Real-time data with complete transparency</p>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <i class="bi bi-shield-check text-success fs-2 mb-3"></i>
+                                    <h5>Security</h5>
+                                    <p class="text-muted">Your data and privacy are our top priority</p>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <i class="bi bi-people text-warning fs-2 mb-3"></i>
+                                    <h5>Community</h5>
+                                    <p class="text-muted">Building a community of informed crypto enthusiasts</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section py-5">
+            <div class="container">
+                <h3 class="text-center text-white mb-5">Why Choose CryptoTracker?</h3>
+                <div class="row g-4">
+                    <!-- Feature 1 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card bg-dark text-white p-4 rounded border h-100">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-graph-up-arrow text-success fs-2 mb-3"></i>
+                                <h5>Real-Time Data</h5>
+                            </div>
+                            <p class="text-muted text-center">
+                                Get live cryptocurrency prices powered by Binance API. Never miss a market movement with our real-time updates.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card bg-dark text-white p-4 rounded border h-100">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-device-laptop text-primary fs-2 mb-3"></i>
+                                <h5>Multi-Platform</h5>
+                            </div>
+                            <p class="text-muted text-center">
+                                Access your portfolio from any device. Our responsive design works perfectly on desktop, tablet, and mobile.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card bg-dark text-white p-4 rounded border h-100">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-bar-chart text-warning fs-2 mb-3"></i>
+                                <h5>Portfolio Tracking</h5>
+                            </div>
+                            <p class="text-muted text-center">
+                                Track your investments with detailed portfolio analysis. Monitor gains, losses, and overall performance.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card bg-dark text-white p-4 rounded border h-100">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-bell text-info fs-2 mb-3"></i>
+                                <h5>Price Alerts</h5>
+                            </div>
+                            <p class="text-muted text-center">
+                                Set custom price alerts for your favorite cryptocurrencies. Never miss important price movements again.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card bg-dark text-white p-4 rounded border h-100">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-lock text-danger fs-2 mb-3"></i>
+                                <h5>Secure & Private</h5>
+                            </div>
+                            <p class="text-muted text-center">
+                                Your data is encrypted and secure. We never share your personal information or trading data with third parties.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card bg-dark text-white p-4 rounded border h-100">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-lightning text-warning fs-2 mb-3"></i>
+                                <h5>Fast & Reliable</h5>
+                            </div>
+                            <p class="text-muted text-center">
+                                Lightning-fast performance with 99.9% uptime. Access your crypto data whenever you need it, without delays.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section class="stats-section py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="stats-card bg-dark text-white p-4 p-md-5 rounded border">
+                            <h3 class="text-center text-white mb-5">CryptoTracker by the Numbers</h3>
+                            <div class="row g-4 text-center">
+                                <div class="col-6 col-md-3">
+                                    <div class="stat-item">
+                                        <i class="bi bi-people-fill text-primary fs-2 mb-2"></i>
+                                        <h4 class="text-primary mb-1">10K+</h4>
+                                        <p class="text-muted">Active Users</p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="stat-item">
+                                        <i class="bi bi-currency-bitcoin text-warning fs-2 mb-2"></i>
+                                        <h4 class="text-warning mb-1">500+</h4>
+                                        <p class="text-muted">Cryptocurrencies</p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="stat-item">
+                                        <i class="bi bi-clock text-info fs-2 mb-2"></i>
+                                        <h4 class="text-info mb-1">24/7</h4>
+                                        <p class="text-muted">Live Monitoring</p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="stat-item">
+                                        <i class="bi bi-shield-check text-success fs-2 mb-2"></i>
+                                        <h4 class="text-success mb-1">99.9%</h4>
+                                        <p class="text-muted">Uptime</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="team-section py-5">
+            <div class="container">
+                <h3 class="text-center text-white mb-5">Meet Our Team</h3>
+                <div class="row g-4 justify-content-center">
+                    <!-- Team Member 1 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="team-card bg-dark text-white p-4 rounded border h-100 text-center">
+                            <div class="team-avatar bg-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-person-fill fs-2 text-white"></i>
+                            </div>
+                            <h5 class="mb-2">Alex Johnson</h5>
+                            <p class="text-primary mb-2">Founder & CEO</p>
+                            <p class="text-muted">
+                                Blockchain enthusiast with 8+ years in fintech. Former Goldman Sachs analyst turned crypto advocate.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Team Member 2 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="team-card bg-dark text-white p-4 rounded border h-100 text-center">
+                            <div class="team-avatar bg-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-person-fill fs-2 text-white"></i>
+                            </div>
+                            <h5 class="mb-2">Sarah Chen</h5>
+                            <p class="text-success mb-2">CTO</p>
+                            <p class="text-muted">
+                                Full-stack developer and security expert. MIT graduate with expertise in blockchain technology and cybersecurity.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Team Member 3 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="team-card bg-dark text-white p-4 rounded border h-100 text-center">
+                            <div class="team-avatar bg-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-person-fill fs-2 text-white"></i>
+                            </div>
+                            <h5 class="mb-2">Mike Rodriguez</h5>
+                            <p class="text-warning mb-2">Head of Product</p>
+                            <p class="text-muted">
+                                UX/UI designer and product strategist. 10+ years creating user-friendly financial applications.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center p-3 p-md-4">
+        <div class="container">
+            <p class="mb-1">&copy; 2023 CryptoTracker</p>
+            <p class="mb-0">Powered by Binance API</p>
+        </div>
+    </footer>
+
+    <script src="js/alerts.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/signup.js"></script>
+
+    <!-- Login Modal -->
+    <div class="login-container hide">
+        <form action="#" method="post" class="login-form">
+            <button type="button" class="close-btn">&times;</button>
+            <h2>Login to CryptoTracker</h2>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="register-container hide">
+        <form action="#" method="post" class="register-form">
+            <button type="button" class="close-btn">&times;</button>
+            <h2>Register for CryptoTracker</h2>
+
+            <label for="reg-username">Username:</label>
+            <input type="text" id="reg-username" name="username" required>
+
+            <label for="reg-email">Email:</label>
+            <input type="email" id="reg-email" name="email" required>
+
+            <label for="reg-password">Password:</label>
+            <input type="password" id="reg-password" name="password" required>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</body>
+</html>

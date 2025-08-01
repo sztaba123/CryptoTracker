@@ -1,0 +1,138 @@
+/* About Page Styles */
+
+.mission-card, .stats-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.mission-card:hover, .stats-card:hover {
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+.feature-card, .team-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(124, 58, 237, 0.6) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover, .team-card:hover {
+    background: rgba(124, 58, 237, 0.15);
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    transform: translateY(-5px);
+}
+
+/* Feature cards icons animation */
+.feature-card i, .mission-card i {
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover i {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.mission-card:hover i {
+    transform: scale(1.1);
+}
+
+/* Statistics animation */
+.stat-item {
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover .stat-item {
+    transform: translateY(-2px);
+}
+
+.stat-item i {
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover i {
+    transform: scale(1.2);
+}
+
+/* Team avatars */
+.team-avatar {
+    width: 80px;
+    height: 80px;
+    transition: all 0.3s ease;
+}
+
+.team-card:hover .team-avatar {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+}
+
+/* Mission section special styling */
+.mission-section .row > div:first-child i {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Active nav link styling */
+.nav-link.active {
+    background: rgba(124, 58, 237, 0.3) !important;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .mission-card, .stats-card, .feature-card, .team-card {
+        margin-bottom: 1rem;
+    }
+    
+    .team-avatar {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .stat-item h4 {
+        font-size: 1.5rem;
+    }
+    
+    .hero h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .mission-card, .stats-card {
+        padding: 1.5rem !important;
+    }
+    
+    .feature-card, .team-card {
+        padding: 1rem !important;
+    }
+    
+    .stat-item {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Section spacing */
+.mission-section, .features-section, .stats-section, .team-section {
+    position: relative;
+}
+
+/* Add subtle separators between sections */
+.mission-section::after, .features-section::after, .stats-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.3), transparent);
+}

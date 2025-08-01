@@ -74,47 +74,69 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Obsługa formularza register
+    // Obsługa formularza register z API
     if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
+        registerForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const username = document.getElementById('reg-username').value;
             const email = document.getElementById('reg-email').value;
             const password = document.getElementById('reg-password').value;
             
-            console.log('Register attempt:', { username, email, password });
+            console.log('🚀 Register attempt:', { username, email, password });
             
-            // Tu możesz dodać logikę rejestracji
-            alert('Registration successful! Please login.');
-            closeRegisterModal();
+            try {
+                // Wywołaj API rejestracji
+                console.log('📡 Sending request to /api/register...');
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+                
+                console.log('📥 Response received:', response.status);
+                const data = await response.json();
+                console.log('📊 Response data:', data);
+                
+                if (data.success) {
+                    showSuccess('Registration successful!', {
+                        message: 'Your account has been created and you are now logged in.',
+                        autoClose: true,
+                        autoCloseTime: 2000,
+                        onConfirm: () => {
+                            registerForm.reset(); // Wyczyść formularz
+                            closeRegisterModal();
+                            
+                            // Automatycznie zaloguj użytkownika po rejestracji
+                            const userData = {
+                                username: username,
+                                email: email,
+                                id: data.userId || Date.now() // Fallback ID jeśli nie ma w response
+                            };
+                            
+                            // Sprawdź czy funkcje z login.js są dostępne
+                            if (typeof updateUIAfterLogin === 'function') {
+                                updateUIAfterLogin(userData);
+                                localStorage.setItem('currentUser', JSON.stringify(userData));
+                            }
+                        }
+                    });
+                } else {
+                    showError('Registration failed', data.message || 'Please try again with different credentials.');
+                }
+                
+            } catch (error) {
+                console.error('❌ Registration error:', error);
+                showError('Connection Error', 'Unable to connect to the server. Please check your internet connection and try again.');
+            }
         });
     }
 });
+  
 
-// Register modal data
 
-const registerModalData = {
-    username: '',
-    email: '',
-    password: ''
-}
-
-//take data from register modal submit
-
-document.querySelector('.register-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const username = document.getElementById('reg-username').value;
-    const email = document.getElementById('reg-email').value;
-    const password = document.getElementById('reg-password').value;
-    
-    registerModalData.username = username;
-    registerModalData.email = email;
-    registerModalData.password = password;
-
-    console.log('Register modal data:', registerModalData);
-});
 
 
 
