@@ -74,6 +74,21 @@ header::after {
     transform: translateY(-1px);
 }
 
+/* Active navigation link */
+.nav-link.active {
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    color: white !important;
+    font-weight: 600;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-link.active:hover {
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.7);
+}
+
 /* Mobile menu centering */
 @media (max-width: 991.98px) {
     .navbar-collapse {
@@ -106,6 +121,20 @@ header::after {
     .nav-link:hover {
         background: rgba(124, 58, 237, 0.3);
         border-color: #8b5cf6;
+    }
+    
+    /* Active link on mobile */
+    .nav-link.active {
+        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: white !important;
+        font-weight: 600;
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+    }
+    
+    .nav-link.active:hover {
+        background: linear-gradient(135deg, #7c3aed, #2563eb);
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.7);
     }
     
     /* Center login/register buttons on mobile */

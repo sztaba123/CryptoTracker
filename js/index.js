@@ -1,6 +1,9 @@
 // Main JavaScript functionality for CryptoTracker
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Set active navigation link
+    setActiveNavLink();
+    
     // Initialize crypto price updates
     initializeCryptoPrices();
     
@@ -16,6 +19,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-refresh prices every 30 seconds
     setInterval(updateAllPrices, 30000);
 });
+
+// Set active navigation link based on current page
+function setActiveNavLink() {
+    // Get current page name from URL
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
+    // Remove active class from all nav links
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => link.classList.remove('active'));
+    
+    // Add active class to current page link
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPage || 
+            (currentPage === '' && href === 'index.html') ||
+            (currentPage === 'index.html' && href === 'index.html')) {
+            link.classList.add('active');
+        }
+    });
+}
 
 // Initialize cryptocurrency price updates
 function initializeCryptoPrices() {
