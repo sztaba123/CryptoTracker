@@ -14,10 +14,14 @@ function createNotificationsDropdown() {
     notificationsButton.type = 'button';
     notificationsButton.setAttribute('data-bs-toggle', 'dropdown');
     notificationsButton.setAttribute('aria-expanded', 'false');
+    
+    // Get real notification count
+    const unreadCount = window.priceMonitor ? window.priceMonitor.getUnreadCount() : 0;
+    
     notificationsButton.innerHTML = `
         <i class="bi bi-bell"></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-count">
-            3
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-count" ${unreadCount === 0 ? 'style="display: none;"' : ''}>
+            ${unreadCount}
         </span>
     `;
     
@@ -48,7 +52,7 @@ function createNotificationsDropdown() {
             <span class="badge" id="total-notifications" style="
                 background: linear-gradient(135deg, #8b5cf6, #3b82f6);
                 color: white;
-            ">3</span>
+            ">${unreadCount}</span>
         </h6>
     `;
     
@@ -56,65 +60,12 @@ function createNotificationsDropdown() {
     const separator1 = document.createElement('li');
     separator1.innerHTML = '<hr class="dropdown-divider" style="border-color: rgba(124, 58, 237, 0.3); margin: 0.5rem 0;">';
     
-    // Lista powiadomień
+    // Lista powiadomień - będzie dynamicznie wypełniana
     const notificationsList = document.createElement('li');
     notificationsList.innerHTML = `
         <div class="notification-list" style="max-height: 300px; overflow-y: auto; padding: 0.5rem;">
-            <div class="dropdown-item notification-item" style="
-                background: rgba(45, 27, 105, 0.2);
-                border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-                transition: all 0.3s ease;
-                color: white;
-                padding: 0.8rem;
-                margin-bottom: 0.5rem;
-                border-radius: 8px;
-                word-wrap: break-word;
-            ">
-                <div class="d-flex align-items-start">
-                    <i class="bi bi-graph-up me-2 mt-1" style="color: #10b981; flex-shrink: 0;"></i>
-                    <div class="flex-grow-1" style="min-width: 0;">
-                        <div class="fw-bold" style="color: #f8fafc; margin-bottom: 0.3rem;">Bitcoin Price Alert</div>
-                        <small style="color: #cbd5e1; display: block; line-height: 1.4;">BTC reached your target price of $65,000</small>
-                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.3rem;">2 minutes ago</div>
-                    </div>
-                </div>
-            </div>
-            <div class="dropdown-item notification-item" style="
-                background: rgba(45, 27, 105, 0.2);
-                border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-                transition: all 0.3s ease;
-                color: white;
-                padding: 0.8rem;
-                margin-bottom: 0.5rem;
-                border-radius: 8px;
-                word-wrap: break-word;
-            ">
-                <div class="d-flex align-items-start">
-                    <i class="bi bi-exclamation-triangle me-2 mt-1" style="color: #f59e0b; flex-shrink: 0;"></i>
-                    <div class="flex-grow-1" style="min-width: 0;">
-                        <div class="fw-bold" style="color: #f8fafc; margin-bottom: 0.3rem;">Ethereum Price Drop</div>
-                        <small style="color: #cbd5e1; display: block; line-height: 1.4;">ETH dropped below $2,500 - Consider reviewing your alerts</small>
-                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.3rem;">1 hour ago</div>
-                    </div>
-                </div>
-            </div>
-            <div class="dropdown-item notification-item" style="
-                background: rgba(45, 27, 105, 0.2);
-                border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-                transition: all 0.3s ease;
-                color: white;
-                padding: 0.8rem;
-                border-radius: 8px;
-                word-wrap: break-word;
-            ">
-                <div class="d-flex align-items-start">
-                    <i class="bi bi-info-circle me-2 mt-1" style="color: #3b82f6; flex-shrink: 0;"></i>
-                    <div class="flex-grow-1" style="min-width: 0;">
-                        <div class="fw-bold" style="color: #f8fafc; margin-bottom: 0.3rem;">Market Update</div>
-                        <small style="color: #cbd5e1; display: block; line-height: 1.4;">Weekly crypto market summary is now available</small>
-                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.3rem;">3 hours ago</div>
-                    </div>
-                </div>
+            <div class="text-center" style="color: #cbd5e1; padding: 1rem;">
+                <i class="bi bi-arrow-clockwise spin me-2"></i>Loading notifications...
             </div>
         </div>
     `;
@@ -166,6 +117,13 @@ function createNotificationsDropdown() {
     // Dodaj przycisk i menu do kontenera
     notificationsContainer.appendChild(notificationsButton);
     notificationsContainer.appendChild(notificationsMenu);
+    
+    // Załaduj rzeczywiste powiadomienia po utworzeniu elementów
+    setTimeout(() => {
+        if (window.priceMonitor) {
+            window.priceMonitor.updateDropdownContent();
+        }
+    }, 100);
     
     // Dodaj event listenery dla powiadomień
     addNotificationsEventListeners();
@@ -224,18 +182,23 @@ function addNotificationsEventListeners() {
                 e.preventDefault();
                 console.log('Mark all read clicked');
                 
-                // Ukryj badge z liczbą powiadomień
-                const notificationCount = document.getElementById('notification-count');
-                const totalNotifications = document.getElementById('total-notifications');
-                
-                if (notificationCount) notificationCount.style.display = 'none';
-                if (totalNotifications) totalNotifications.textContent = '0';
-                
-                // Dodaj efekt "przeczytane" do wszystkich powiadomień
-                notificationItems.forEach(item => {
-                    item.style.opacity = '0.6';
-                    item.style.background = 'rgba(124, 58, 237, 0.1)';
-                });
+                // Użyj funkcji z price monitor
+                if (window.priceMonitor) {
+                    window.priceMonitor.markAllAsRead();
+                } else {
+                    // Fallback dla przypadku gdy price monitor nie jest dostępny
+                    const notificationCount = document.getElementById('notification-count');
+                    const totalNotifications = document.getElementById('total-notifications');
+                    
+                    if (notificationCount) notificationCount.style.display = 'none';
+                    if (totalNotifications) totalNotifications.textContent = '0';
+                    
+                    // Dodaj efekt "przeczytane" do wszystkich powiadomień
+                    notificationItems.forEach(item => {
+                        item.style.opacity = '0.6';
+                        item.style.background = 'rgba(124, 58, 237, 0.1)';
+                    });
+                }
                 
                 showSuccessToast('All notifications marked as read!');
             });
@@ -366,113 +329,34 @@ function showAllNotificationsModal() {
         overflow-y: auto;
     `;
     
-    // Lista wszystkich powiadomień
-    modalBody.innerHTML = `
-        <div class="notification-item-modal" style="
-            padding: 1.2rem; 
-            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-            transition: all 0.3s ease;
-            background: rgba(45, 27, 105, 0.3);
-        ">
-            <div class="d-flex align-items-start">
-                <i class="bi bi-graph-up me-3 mt-1" style="font-size: 1.2rem; color: #10b981;"></i>
-                <div class="flex-grow-1">
-                    <div class="fw-bold" style="color: #f8fafc;">Bitcoin Price Alert</div>
-                    <p class="mb-1" style="color: #cbd5e1;">BTC reached your target price of $65,000. This is a great opportunity to review your trading strategy.</p>
-                    <small style="color: #94a3b8;">2 minutes ago</small>
-                </div>
-            </div>
-        </div>
-        <div class="notification-item-modal" style="
-            padding: 1.2rem; 
-            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-            transition: all 0.3s ease;
-            background: rgba(45, 27, 105, 0.3);
-        ">
-            <div class="d-flex align-items-start">
-                <i class="bi bi-exclamation-triangle me-3 mt-1" style="font-size: 1.2rem; color: #f59e0b;"></i>
-                <div class="flex-grow-1">
-                    <div class="fw-bold" style="color: #f8fafc;">Ethereum Price Drop</div>
-                    <p class="mb-1" style="color: #cbd5e1;">ETH dropped below $2,500. Consider reviewing your alerts and possibly adjusting your price targets.</p>
-                    <small style="color: #94a3b8;">1 hour ago</small>
-                </div>
-            </div>
-        </div>
-        <div class="notification-item-modal" style="
-            padding: 1.2rem; 
-            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-            transition: all 0.3s ease;
-            background: rgba(45, 27, 105, 0.3);
-        ">
-            <div class="d-flex align-items-start">
-                <i class="bi bi-info-circle me-3 mt-1" style="font-size: 1.2rem; color: #3b82f6;"></i>
-                <div class="flex-grow-1">
-                    <div class="fw-bold" style="color: #f8fafc;">Market Update</div>
-                    <p class="mb-1" style="color: #cbd5e1;">Weekly crypto market summary is now available. Check out the latest trends and analysis.</p>
-                    <small style="color: #94a3b8;">3 hours ago</small>
-                </div>
-            </div>
-        </div>
-        <div class="notification-item-modal" style="
-            padding: 1.2rem; 
-            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-            transition: all 0.3s ease;
-            background: rgba(45, 27, 105, 0.3);
-        ">
-            <div class="d-flex align-items-start">
-                <i class="bi bi-bell me-3 mt-1" style="font-size: 1.2rem; color: #8b5cf6;"></i>
-                <div class="flex-grow-1">
-                    <div class="fw-bold" style="color: #f8fafc;">New Alert Created</div>
-                    <p class="mb-1" style="color: #cbd5e1;">Successfully created price alert for Solana (SOL) at $150.</p>
-                    <small style="color: #94a3b8;">5 hours ago</small>
-                </div>
-            </div>
-        </div>
-        <div class="notification-item-modal" style="
-            padding: 1.2rem; 
-            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-            transition: all 0.3s ease;
-            background: rgba(45, 27, 105, 0.3);
-        ">
-            <div class="d-flex align-items-start">
-                <i class="bi bi-graph-down me-3 mt-1" style="font-size: 1.2rem; color: #ef4444;"></i>
-                <div class="flex-grow-1">
-                    <div class="fw-bold" style="color: #f8fafc;">Cardano Price Alert</div>
-                    <p class="mb-1" style="color: #cbd5e1;">ADA has dropped 15% in the last 24 hours. Current price: $0.45</p>
-                    <small style="color: #94a3b8;">8 hours ago</small>
-                </div>
-            </div>
-        </div>
-        <div class="notification-item-modal" style="
-            padding: 1.2rem; 
-            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-            transition: all 0.3s ease;
-            background: rgba(45, 27, 105, 0.3);
-        ">
-            <div class="d-flex align-items-start">
-                <i class="bi bi-lightning me-3 mt-1" style="font-size: 1.2rem; color: #f59e0b;"></i>
-                <div class="flex-grow-1">
-                    <div class="fw-bold" style="color: #f8fafc;">Quick Price Movement</div>
-                    <p class="mb-1" style="color: #cbd5e1;">Dogecoin (DOGE) is experiencing high volatility. Price changed by 8% in the last hour.</p>
-                    <small style="color: #94a3b8;">12 hours ago</small>
-                </div>
-            </div>
-        </div>
-        <div class="notification-item-modal" style="
-            padding: 1.2rem;
-            transition: all 0.3s ease;
-            background: rgba(45, 27, 105, 0.3);
-        ">
-            <div class="d-flex align-items-start">
-                <i class="bi bi-check-circle me-3 mt-1" style="font-size: 1.2rem; color: #10b981;"></i>
-                <div class="flex-grow-1">
-                    <div class="fw-bold" style="color: #f8fafc;">Welcome to CryptoTracker!</div>
-                    <p class="mb-1" style="color: #cbd5e1;">Your account has been successfully verified. You can now set up price alerts and track your favorite cryptocurrencies.</p>
-                    <small style="color: #94a3b8;">1 day ago</small>
-                </div>
-            </div>
-        </div>
-    `;
+    // Załaduj rzeczywiste powiadomienia
+    modalBody.innerHTML = '<div class="text-center py-4"><i class="bi bi-arrow-clockwise spin me-2"></i>Loading notifications...</div>';
+    
+    // Załaduj prawdziwe powiadomienia po krótkim opóźnieniu
+    setTimeout(() => {
+        if (window.priceMonitor) {
+            const notifications = window.priceMonitor.getNotifications();
+            modalBody.innerHTML = '';
+            
+            if (notifications.length === 0) {
+                modalBody.innerHTML = `
+                    <div class="text-center py-5" style="color: #cbd5e1;">
+                        <i class="bi bi-bell-slash me-2 fs-1 mb-3 d-block"></i>
+                        <h5>No notifications yet</h5>
+                        <p>Price alerts and market updates will appear here</p>
+                    </div>
+                `;
+            } else {
+                notifications.forEach(notification => {
+                    const notificationItem = createModalNotificationItem(notification);
+                    modalBody.appendChild(notificationItem);
+                });
+            }
+        } else {
+            // Fallback content jeśli price monitor nie jest dostępny
+            modalBody.innerHTML = getStaticModalContent();
+        }
+    }, 100);
     
     // Footer modala
     const modalFooter = document.createElement('div');
@@ -639,7 +523,101 @@ function showAllNotificationsModal() {
     });
 }
 
+// Create notification item for modal
+function createModalNotificationItem(notification) {
+    const item = document.createElement('div');
+    item.className = 'notification-item-modal';
+    item.style.cssText = `
+        padding: 1.2rem; 
+        border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+        transition: all 0.3s ease;
+        background: ${notification.read ? 'rgba(124, 58, 237, 0.1)' : 'rgba(45, 27, 105, 0.3)'};
+        opacity: ${notification.read ? '0.6' : '1'};
+        cursor: pointer;
+    `;
+
+    const icons = {
+        success: 'bi-check-circle-fill',
+        warning: 'bi-exclamation-triangle-fill',
+        error: 'bi-exclamation-circle-fill',
+        info: 'bi-info-circle-fill'
+    };
+
+    const iconColors = {
+        success: '#10b981',
+        warning: '#f59e0b',
+        error: '#ef4444',
+        info: '#3b82f6'
+    };
+
+    const timeAgo = window.priceMonitor ? window.priceMonitor.getTimeAgo(notification.timestamp) : 'Unknown time';
+
+    item.innerHTML = `
+        <div class="d-flex align-items-start">
+            <i class="bi ${icons[notification.type]} me-3 mt-1" style="font-size: 1.2rem; color: ${iconColors[notification.type]};"></i>
+            <div class="flex-grow-1">
+                <div class="fw-bold" style="color: #f8fafc;">${notification.title}</div>
+                <p class="mb-1" style="color: #cbd5e1;">${notification.message}</p>
+                <small style="color: #94a3b8;">${timeAgo}</small>
+            </div>
+        </div>
+    `;
+
+    // Add hover effects
+    item.addEventListener('mouseenter', function() {
+        if (!notification.read) {
+            this.style.background = 'rgba(124, 58, 237, 0.2)';
+            this.style.borderLeft = '4px solid #8b5cf6';
+            this.style.transform = 'translateX(5px)';
+            this.style.boxShadow = '0 5px 15px rgba(124, 58, 237, 0.3)';
+        }
+    });
+    
+    item.addEventListener('mouseleave', function() {
+        if (!notification.read) {
+            this.style.background = 'rgba(45, 27, 105, 0.3)';
+            this.style.borderLeft = '';
+            this.style.transform = '';
+            this.style.boxShadow = '';
+        }
+    });
+    
+    item.addEventListener('click', function() {
+        if (!notification.read && window.priceMonitor) {
+            window.priceMonitor.markAsRead(notification.id);
+            this.style.opacity = '0.6';
+            this.style.background = 'rgba(124, 58, 237, 0.1)';
+            this.style.borderLeft = '4px solid rgba(124, 58, 237, 0.5)';
+            showInfoToast('Notification marked as read');
+        }
+    });
+
+    return item;
+}
+
+// Fallback static content for modal
+function getStaticModalContent() {
+    return `
+        <div class="notification-item-modal" style="
+            padding: 1.2rem; 
+            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+            transition: all 0.3s ease;
+            background: rgba(45, 27, 105, 0.3);
+        ">
+            <div class="d-flex align-items-start">
+                <i class="bi bi-info-circle me-3 mt-1" style="font-size: 1.2rem; color: #3b82f6;"></i>
+                <div class="flex-grow-1">
+                    <div class="fw-bold" style="color: #f8fafc;">Welcome to CryptoTracker!</div>
+                    <p class="mb-1" style="color: #cbd5e1;">Real-time price monitoring is loading. Add cryptocurrencies to your watchlist to receive price alerts.</p>
+                    <small style="color: #94a3b8;">Just now</small>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 // Make functions globally available
 window.createNotificationsDropdown = createNotificationsDropdown;
 window.showAllNotificationsModal = showAllNotificationsModal;
 window.updateNotificationCount = updateNotificationCount;
+window.createModalNotificationItem = createModalNotificationItem;

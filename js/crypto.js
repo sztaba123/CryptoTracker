@@ -408,6 +408,24 @@ function addToWatchlist(cryptoId, name, symbol, image, price, priceAlert, alertT
     
     watchlist.push(watchlistItem);
     saveWatchlist(watchlist);
+    
+    // Start price monitoring if not already active
+    if (window.priceMonitor && !window.priceMonitor.isActive) {
+        window.priceMonitor.startMonitoring();
+    }
+    
+    // Add notification about successful watchlist addition
+    if (window.priceMonitor) {
+        window.priceMonitor.addNotification({
+            type: 'success',
+            title: 'Added to Watchlist',
+            message: `${name} (${symbol.toUpperCase()}) has been added to your watchlist${priceAlert ? ` with price alert at $${priceAlert}` : ''}.`,
+            cryptoId: cryptoId,
+            cryptoName: name,
+            timestamp: Date.now(),
+            read: false
+        });
+    }
 }
 
 // Remove from watchlist

@@ -3,6 +3,12 @@
 
 // Logout function
 function logout() {
+    // Stop price monitoring
+    if (window.priceMonitor) {
+        console.log('Stopping price monitoring for logout');
+        window.priceMonitor.stopMonitoring();
+    }
+    
     // Usuń dane użytkownika z localStorage
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('currentUser');
@@ -27,6 +33,13 @@ function checkExistingLogin() {
     
     if (isLoggedIn === 'true' && currentUser) {
         updateUIAfterLogin(currentUser);
+        
+        // Start price monitoring for existing login
+        if (window.priceMonitor) {
+            console.log('Starting price monitoring for existing login');
+            window.priceMonitor.startMonitoring();
+        }
+        
         return true;
     }
     return false;
@@ -40,6 +53,17 @@ function loginUI(username) {
     
     // Aktualizuj UI
     updateUIAfterLogin(username);
+    
+    // Start price monitoring for logged-in user
+    if (window.priceMonitor) {
+        console.log('Starting price monitoring for logged-in user');
+        window.priceMonitor.startMonitoring();
+        
+        // Request notification permission if not already granted
+        if ('Notification' in window && Notification.permission === 'default') {
+            window.priceMonitor.requestNotificationPermission();
+        }
+    }
     
     showSuccessToast(`Welcome back, ${username}!`);
     return true;

@@ -901,6 +901,19 @@ function removeFromWatchlist(cryptoId, cryptoName) {
         const filteredWatchlist = watchlist.filter(item => item.id !== cryptoId);
         saveWatchlist(filteredWatchlist);
         
+        // Add notification about removal
+        if (window.priceMonitor) {
+            window.priceMonitor.addNotification({
+                type: 'info',
+                title: 'Removed from Watchlist',
+                message: `${cryptoName} has been removed from your watchlist.`,
+                cryptoId: cryptoId,
+                cryptoName: cryptoName,
+                timestamp: Date.now(),
+                read: false
+            });
+        }
+        
         showSuccessToast(`${cryptoName} removed from watchlist`);
         loadWatchlistData(); // Refresh display
     }
@@ -927,6 +940,19 @@ function editPriceAlert(cryptoId, cryptoName, currentPrice) {
         watchlist[itemIndex].priceAlert = targetPrice;
         watchlist[itemIndex].alertType = alertType;
         saveWatchlist(watchlist);
+        
+        // Add notification about alert update
+        if (window.priceMonitor) {
+            window.priceMonitor.addNotification({
+                type: 'info',
+                title: 'Price Alert Updated',
+                message: `Price alert for ${cryptoName} has been set to $${formatNumber(targetPrice)} (${alertType} current price).`,
+                cryptoId: cryptoId,
+                cryptoName: cryptoName,
+                timestamp: Date.now(),
+                read: false
+            });
+        }
         
         showSuccessToast(`Price alert set for ${cryptoName} at $${formatNumber(targetPrice)}`);
         loadWatchlistData(); // Refresh display
