@@ -50,7 +50,7 @@
                     </ul>
                     
                     <!-- Login/Register buttons lub User dropdown (prawa strona na desktop, wyśrodkowane na mobile) -->
-                    <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center justify-content-lg-start ms-lg-auto">
+                    <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center justify-content-lg-start ms-lg-auto auth-buttons">
                         <button class="btn me-lg-3 mb-2 mb-lg-0 login" id="login-btn">Login</button>
                         <button class="btn btn-signup" id="sign-up-btn">Sign Up</button>
                     </div>
@@ -74,6 +74,9 @@
                                 <div class="profile-name">
                                     <h2 id="profile-username" class="mb-1">Loading...</h2>
                                     <p id="profile-email" class="text-muted mb-0">Loading...</p>
+                                    <div class="profile-bio mt-2">
+                                        <p id="profile-bio" class="text-light-muted mb-0 fst-italic">No bio available</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -134,7 +137,7 @@
                                     <button class="btn btn-outline-warning" id="reset-password-btn">
                                         <i class="bi bi-key me-2"></i>Reset Password
                                     </button>
-                                    <button class="btn btn-outline-info" id="edit-profile-btn">
+                                    <button class="btn btn-outline-info" id="edit-profile-btn" onclick="showEditProfileModal()">
                                         <i class="bi bi-pencil-square me-2"></i>Edit Profile
                                     </button>
                                 </div>
@@ -180,42 +183,76 @@
     <!-- Scripts -->
     <script src="js/alerts.js"></script>
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notifications.js"></script>
     <script src="js/index.js"></script>
     <script src="js/login.js"></script>
     <script src="js/signup.js"></script>
     <script src="js/profile.js"></script>
 
-    <!-- Modals (jeśli potrzebne) -->
-    <div class="login-container hide">
-        <form action="#" method="post" class="login-form">
+    <script>
+        // Initialize profile page and authentication
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAuth();
+            initializeProfile();
+        });
+    </script>
+
+    <!-- Edit Profile Modal -->
+    <div class="edit-profile-container hide">
+        <div class="edit-profile-modal">
             <button type="button" class="close-btn">&times;</button>
-            <h2>Login to CryptoTracker</h2>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+            <h3>Edit Profile</h3>
             
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            
-            <button type="submit">Login</button>
-        </form>
+            <form class="edit-profile-form">
+                <div class="form-group">
+                    <label for="edit-username">Username:</label>
+                    <input type="text" id="edit-username" name="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-email">Email:</label>
+                    <input type="email" id="edit-email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-bio">Bio (optional):</label>
+                    <textarea id="edit-bio" name="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="register-container hide">
-        <form action="#" method="post" class="register-form">
+    <div class="reset-password-container hide">
+        <div class="reset-password-modal">
             <button type="button" class="close-btn">&times;</button>
-            <h2>Register for CryptoTracker</h2>
-
-            <label for="reg-username">Username:</label>
-            <input type="text" id="reg-username" name="username" required>
-
-            <label for="reg-email">Email:</label>
-            <input type="email" id="reg-email" name="email" required>
-
-            <label for="reg-password">Password:</label>
-            <input type="password" id="reg-password" name="password" required>
-
-            <button type="submit">Register</button>
-        </form>
+            <h3>Reset Password</h3>
+            
+            <form class="reset-password-form">
+                <div class="form-group">
+                    <label for="old-password">Old password</label>
+                    <input type="password" id="old-password" name="old-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New password</label>
+                    <input type="password" id="new-password" name="new-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm new password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Reset Password</button>
+                    <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
+    
 </body>
 </html>
