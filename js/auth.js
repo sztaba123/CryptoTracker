@@ -34,10 +34,10 @@ function checkExistingLogin() {
     if (isLoggedIn === 'true' && currentUser) {
         updateUIAfterLogin(currentUser);
         
-        // Start price monitoring for existing login
+        // Start price monitoring for existing login without notification
         if (window.priceMonitor) {
             console.log('Starting price monitoring for existing login');
-            window.priceMonitor.startMonitoring();
+            window.priceMonitor.startMonitoring(false); // No notification for existing login
         }
         
         return true;
@@ -54,10 +54,10 @@ function loginUI(username) {
     // Aktualizuj UI
     updateUIAfterLogin(username);
     
-    // Start price monitoring for logged-in user
+    // Start price monitoring for logged-in user with notification
     if (window.priceMonitor) {
         console.log('Starting price monitoring for logged-in user');
-        window.priceMonitor.startMonitoring();
+        window.priceMonitor.startMonitoring(true); // Show notification on login
         
         // Request notification permission if not already granted
         if ('Notification' in window && Notification.permission === 'default') {

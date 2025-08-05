@@ -409,9 +409,9 @@ function addToWatchlist(cryptoId, name, symbol, image, price, priceAlert, alertT
     watchlist.push(watchlistItem);
     saveWatchlist(watchlist);
     
-    // Start price monitoring if not already active
+    // Start price monitoring if not already active (without notification)
     if (window.priceMonitor && !window.priceMonitor.isActive) {
-        window.priceMonitor.startMonitoring();
+        window.priceMonitor.startMonitoring(false);
     }
     
     // Add notification about successful watchlist addition

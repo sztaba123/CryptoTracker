@@ -277,6 +277,16 @@
     75% { transform: translateX(5px); }
 }
 
+/* Spinning animation for loading */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
 .custom-alert.shake {
     animation: shake 0.5s ease-in-out;
 }

@@ -25,7 +25,7 @@ class PriceMonitor {
     }
 
     // Start price monitoring
-    startMonitoring() {
+    startMonitoring(showNotification = false) {
         if (this.isActive) return;
         
         console.log('Starting price monitoring...');
@@ -39,13 +39,16 @@ class PriceMonitor {
             this.checkPriceAlerts();
         }, this.checkInterval);
         
-        this.addNotification({
-            type: 'info',
-            title: 'Price Monitoring Started',
-            message: 'Real-time price monitoring is now active for your watchlist.',
-            timestamp: Date.now(),
-            read: false
-        });
+        // Only show notification if explicitly requested
+        if (showNotification) {
+            this.addNotification({
+                type: 'info',
+                title: 'Price Monitoring Started',
+                message: 'Real-time price monitoring is now active for your watchlist.',
+                timestamp: Date.now(),
+                read: false
+            });
+        }
     }
 
     // Stop price monitoring
@@ -434,7 +437,7 @@ class PriceMonitor {
 window.priceMonitor = new PriceMonitor();
 
 // Make functions globally available
-window.startPriceMonitoring = () => window.priceMonitor.startMonitoring();
+window.startPriceMonitoring = (showNotification = false) => window.priceMonitor.startMonitoring(showNotification);
 window.stopPriceMonitoring = () => window.priceMonitor.stopMonitoring();
 window.getPriceNotifications = () => window.priceMonitor.getNotifications();
 window.markNotificationRead = (id) => window.priceMonitor.markAsRead(id);
