@@ -19,6 +19,15 @@ function initializeProfile() {
     // Ustaw dane użytkownika na stronie profilu
     updateProfileData(currentUser);
     
+    // Initialize reset password button
+    initializeResetPasswordButton();
+    
+    // Load watchlist data
+    loadWatchlistData();
+    
+    // Setup watchlist refresh button
+    setupWatchlistRefresh();
+    
     console.log('Profile page initialized for user:', currentUser);
 }
 
@@ -387,6 +396,260 @@ function saveEditProfileChanges() {
     showSuccessToast('Profile updated successfully!');
 }
 
+// Reset Password Modal Functions
+function showResetPasswordModal() {
+    const resetPasswordModal = document.querySelector('.reset-password-container');
+    if (resetPasswordModal) {
+        resetPasswordModal.classList.remove('hide');
+        resetPasswordModal.classList.add('show');
+        resetPasswordModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Clear form fields
+        clearResetPasswordForm();
+        
+        // Setup event listeners
+        setupResetPasswordModalListeners();
+    }
+}
+
+// Clear reset password form
+function clearResetPasswordForm() {
+    const oldPasswordInput = document.getElementById('old-password');
+    const newPasswordInput = document.getElementById('new-password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    
+    if (oldPasswordInput) oldPasswordInput.value = '';
+    if (newPasswordInput) newPasswordInput.value = '';
+    if (confirmPasswordInput) confirmPasswordInput.value = '';
+    
+    // Remove any existing password strength indicators
+    const existingStrengthIndicator = document.querySelector('.password-strength');
+    if (existingStrengthIndicator) {
+        existingStrengthIndicator.remove();
+    }
+}
+
+// Setup reset password modal event listeners
+function setupResetPasswordModalListeners() {
+    const modal = document.querySelector('.reset-password-container');
+    if (!modal) {
+        console.error('Reset password modal not found');
+        return;
+    }
+    
+    // Check if listeners are already set up to avoid duplicates
+    if (modal.hasAttribute('data-listeners-set')) {
+        return;
+    }
+    
+    const closeBtn = modal.querySelector('.close-btn');
+    const cancelBtn = modal.querySelector('.btn-cancel');
+    const form = modal.querySelector('.reset-password-form');
+    const newPasswordInput = document.getElementById('new-password');
+    
+    console.log('Setting up reset password modal listeners:', {
+        modal: !!modal,
+        closeBtn: !!closeBtn,
+        cancelBtn: !!cancelBtn,
+        form: !!form,
+        newPasswordInput: !!newPasswordInput
+    });
+    
+    // Close modal function
+    function closeModal() {
+        modal.classList.add('hide');
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        clearResetPasswordForm();
+    }
+    
+    // Close button
+    if (closeBtn) {
+        closeBtn.onclick = closeModal;
+    }
+    
+    // Cancel button
+    if (cancelBtn) {
+        cancelBtn.onclick = closeModal;
+    }
+    
+    // Click outside to close
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    };
+    
+    // ESC key to close
+    const escapeHandler = function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hide')) {
+            closeModal();
+        }
+    };
+    document.addEventListener('keydown', escapeHandler);
+    
+    // Password strength indicator
+    if (newPasswordInput) {
+        newPasswordInput.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+    }
+    
+    // Form submission
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Reset password form submitted');
+            handleResetPassword();
+        });
+    } else {
+        console.error('Reset password form not found');
+    }
+    
+    // Mark listeners as set up
+    modal.setAttribute('data-listeners-set', 'true');
+}
+
+// Check password strength
+function checkPasswordStrength(password) {
+    const newPasswordInput = document.getElementById('new-password');
+    let existingIndicator = document.querySelector('.password-strength');
+    
+    // Remove existing indicator
+    if (existingIndicator) {
+        existingIndicator.remove();
+    }
+    
+    if (password.length === 0) return;
+    
+    // Create strength indicator
+    const strengthIndicator = document.createElement('div');
+    strengthIndicator.className = 'password-strength';
+    
+    let strength = 0;
+    let message = '';
+    
+    // Check password criteria
+    if (password.length >= 8) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    
+    if (strength < 3) {
+        strengthIndicator.classList.add('weak');
+        message = '⚠️ Weak password - add more characters, numbers, or symbols';
+    } else if (strength < 5) {
+        strengthIndicator.classList.add('medium');
+        message = '⚡ Medium password - consider adding special characters';
+    } else {
+        strengthIndicator.classList.add('strong');
+        message = '✅ Strong password';
+    }
+    
+    strengthIndicator.textContent = message;
+    newPasswordInput.parentNode.appendChild(strengthIndicator);
+}
+
+// Handle reset password
+function handleResetPassword() {
+    console.log('handleResetPassword called');
+    
+    const oldPassword = document.getElementById('old-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    
+    console.log('Password fields:', {
+        oldPassword: oldPassword ? 'filled' : 'empty',
+        newPassword: newPassword ? 'filled' : 'empty',
+        confirmPassword: confirmPassword ? 'filled' : 'empty'
+    });
+    
+    // Validation
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        showErrorToast('Please fill all password fields');
+        return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        showErrorToast('New passwords do not match');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        showErrorToast('Password must be at least 6 characters long');
+        return;
+    }
+    
+    if (oldPassword === newPassword) {
+        showErrorToast('New password must be different from old password');
+        return;
+    }
+    
+    // Get user email
+    const userEmail = localStorage.getItem('userEmail');
+    const currentUser = localStorage.getItem('currentUser');
+    
+    if (!userEmail || !currentUser) {
+        showErrorToast('User session not found. Please log in again.');
+        return;
+    }
+    
+    // Show loading state
+    const submitBtn = document.querySelector('.reset-password-form .btn-primary');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Changing Password...';
+    submitBtn.disabled = true;
+    
+    // Call API to change password
+    fetch('/api/change-password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: userEmail,
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Close modal
+            const modal = document.querySelector('.reset-password-container');
+            modal.classList.add('hide');
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            showSuccessToast('Password changed successfully!');
+            clearResetPasswordForm();
+        } else {
+            showErrorToast(data.message || 'Error changing password');
+        }
+    })
+    .catch(error => {
+        console.error('Password change error:', error);
+        showErrorToast('Network error. Please check your connection and try again.');
+    })
+    .finally(() => {
+        // Reset button state
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+}
+
+// Add click handler for reset password button
+function initializeResetPasswordButton() {
+    const resetPasswordBtn = document.getElementById('reset-password-btn');
+    if (resetPasswordBtn) {
+        resetPasswordBtn.addEventListener('click', showResetPasswordModal);
+    }
+}
+
 // Make functions globally available
 window.initializeProfile = initializeProfile;
 window.saveProfileChanges = saveProfileChanges;
@@ -395,3 +658,294 @@ window.deleteAccount = deleteAccount;
 window.changePassword = changePassword;
 window.exportUserData = exportUserData;
 window.showEditProfileModal = showEditProfileModal;
+window.showResetPasswordModal = showResetPasswordModal;
+window.handleResetPassword = handleResetPassword;
+window.removeFromWatchlist = removeFromWatchlist;
+window.editPriceAlert = editPriceAlert;
+
+// Watchlist Management Functions
+function loadWatchlistData() {
+    console.log('Loading watchlist data...');
+    showWatchlistLoading();
+    
+    const watchlist = getWatchlist();
+    
+    if (watchlist.length === 0) {
+        showEmptyWatchlist();
+        updateWatchlistStats(0, 0);
+        return;
+    }
+    
+    // Get current prices for watchlist items
+    loadWatchlistPrices(watchlist);
+}
+
+function getWatchlist() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) return [];
+    
+    const watchlist = localStorage.getItem(`watchlist_${currentUser}`);
+    return watchlist ? JSON.parse(watchlist) : [];
+}
+
+function saveWatchlist(watchlist) {
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) return;
+    
+    localStorage.setItem(`watchlist_${currentUser}`, JSON.stringify(watchlist));
+}
+
+async function loadWatchlistPrices(watchlist) {
+    try {
+        // Create comma-separated list of crypto IDs
+        const cryptoIds = watchlist.map(item => item.id).join(',');
+        
+        // Fetch current prices from CoinGecko
+        const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds}&vs_currencies=usd&include_24hr_change=true`);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch prices');
+        }
+        
+        const priceData = await response.json();
+        
+        // Merge price data with watchlist
+        const enrichedWatchlist = watchlist.map(item => ({
+            ...item,
+            currentPrice: priceData[item.id]?.usd || 0,
+            priceChange24h: priceData[item.id]?.usd_24h_change || 0
+        }));
+        
+        displayWatchlist(enrichedWatchlist);
+        updateWatchlistStats(enrichedWatchlist.length, countActiveAlerts(enrichedWatchlist));
+        
+    } catch (error) {
+        console.error('Error loading watchlist prices:', error);
+        showWatchlistError();
+    }
+}
+
+function displayWatchlist(watchlist) {
+    const container = document.getElementById('watchlist-grid');
+    const loading = document.getElementById('watchlist-loading');
+    const empty = document.getElementById('empty-watchlist');
+    
+    if (loading) loading.classList.add('d-none');
+    if (empty) empty.classList.add('d-none');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    watchlist.forEach(item => {
+        const card = createWatchlistCard(item);
+        container.appendChild(card);
+    });
+}
+
+function createWatchlistCard(item) {
+    const card = document.createElement('div');
+    card.className = 'watchlist-item';
+    
+    const changeClass = item.priceChange24h >= 0 ? 'positive' : 'negative';
+    const changeIcon = item.priceChange24h >= 0 ? '▲' : '▼';
+    
+    // Calculate performance since added
+    const addedPrice = item.addedPrice || item.currentPrice;
+    const performancePercent = ((item.currentPrice - addedPrice) / addedPrice) * 100;
+    const performanceClass = performancePercent > 0 ? 'profit' : performancePercent < 0 ? 'loss' : 'neutral';
+    const performanceText = performancePercent > 0 ? `+${performancePercent.toFixed(2)}%` : `${performancePercent.toFixed(2)}%`;
+    
+    // Price alert info
+    const hasAlert = item.priceAlert;
+    const alertClass = hasAlert ? '' : 'no-alert';
+    const alertText = hasAlert 
+        ? `Alert: ${item.alertType} $${formatNumber(item.priceAlert)}`
+        : 'No price alert set';
+    
+    // Format added date
+    const addedDate = new Date(item.addedDate).toLocaleDateString();
+    
+    card.innerHTML = `
+        <div class="watchlist-crypto-header">
+            <img src="${item.image}" alt="${item.name}" class="watchlist-crypto-logo" loading="lazy">
+            <div class="watchlist-crypto-info">
+                <h5>${item.name}</h5>
+                <p class="crypto-symbol">${item.symbol}</p>
+            </div>
+        </div>
+        
+        <div class="watchlist-price-info">
+            <div class="current-price">$${formatNumber(item.currentPrice)}</div>
+            <div class="price-change ${changeClass}">
+                ${changeIcon} ${item.priceChange24h.toFixed(2)}%
+            </div>
+        </div>
+        
+        <div class="watchlist-stats">
+            <div class="watchlist-stat">
+                <span class="label">Added</span>
+                <span class="value">${addedDate}</span>
+            </div>
+            <div class="watchlist-stat">
+                <span class="label">Added at</span>
+                <span class="value">$${formatNumber(addedPrice)}</span>
+            </div>
+        </div>
+        
+        <div class="performance-indicator">
+            <span class="performance-badge ${performanceClass}">
+                ${performanceText} since added
+            </span>
+        </div>
+        
+        <div class="price-alert-info ${alertClass}">
+            <p class="alert-text ${alertClass}">
+                <i class="bi ${hasAlert ? 'bi-bell-fill' : 'bi-bell'} me-1"></i>
+                ${alertText}
+            </p>
+        </div>
+        
+        <div class="watchlist-actions">
+            <button class="btn-edit-alert" onclick="editPriceAlert('${item.id}', '${item.name}', ${item.currentPrice})">
+                <i class="bi bi-bell me-1"></i>Alert
+            </button>
+            <button class="btn-remove" onclick="removeFromWatchlist('${item.id}', '${item.name}')">
+                <i class="bi bi-trash me-1"></i>Remove
+            </button>
+        </div>
+    `;
+    
+    return card;
+}
+
+function countActiveAlerts(watchlist) {
+    return watchlist.filter(item => item.priceAlert).length;
+}
+
+function updateWatchlistStats(trackedCount, alertsCount) {
+    // Update tracked cryptos count
+    const trackedElement = document.getElementById('tracked-cryptos-count');
+    if (trackedElement) trackedElement.textContent = trackedCount;
+    
+    // Update total alerts count
+    const totalAlertsElement = document.getElementById('total-alerts');
+    if (totalAlertsElement) totalAlertsElement.textContent = alertsCount;
+    
+    // Update active alerts badge
+    const activeAlertsElement = document.getElementById('active-alerts');
+    if (activeAlertsElement) activeAlertsElement.textContent = alertsCount;
+    
+    // Update watchlist count in quick stats
+    const watchlistCountElement = document.getElementById('watchlist-count');
+    if (watchlistCountElement) watchlistCountElement.textContent = trackedCount;
+}
+
+function showWatchlistLoading() {
+    const loading = document.getElementById('watchlist-loading');
+    const grid = document.getElementById('watchlist-grid');
+    const empty = document.getElementById('empty-watchlist');
+    
+    if (loading) loading.classList.remove('d-none');
+    if (grid) grid.innerHTML = '';
+    if (empty) empty.classList.add('d-none');
+}
+
+function showEmptyWatchlist() {
+    const loading = document.getElementById('watchlist-loading');
+    const grid = document.getElementById('watchlist-grid');
+    const empty = document.getElementById('empty-watchlist');
+    
+    if (loading) loading.classList.add('d-none');
+    if (grid) grid.innerHTML = '';
+    if (empty) empty.classList.remove('d-none');
+}
+
+function showWatchlistError() {
+    const container = document.getElementById('watchlist-grid');
+    const loading = document.getElementById('watchlist-loading');
+    
+    if (loading) loading.classList.add('d-none');
+    if (container) {
+        container.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Failed to load watchlist data. Please try refreshing.
+            </div>
+        `;
+    }
+}
+
+function setupWatchlistRefresh() {
+    const refreshBtn = document.getElementById('refresh-watchlist');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>Refreshing...';
+            this.disabled = true;
+            
+            loadWatchlistData();
+            
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.disabled = false;
+                showSuccessToast('Watchlist refreshed');
+            }, 1000);
+        });
+    }
+}
+
+function removeFromWatchlist(cryptoId, cryptoName) {
+    if (confirm(`Remove ${cryptoName} from your watchlist?`)) {
+        const watchlist = getWatchlist();
+        const filteredWatchlist = watchlist.filter(item => item.id !== cryptoId);
+        saveWatchlist(filteredWatchlist);
+        
+        showSuccessToast(`${cryptoName} removed from watchlist`);
+        loadWatchlistData(); // Refresh display
+    }
+}
+
+function editPriceAlert(cryptoId, cryptoName, currentPrice) {
+    const newPrice = prompt(`Set price alert for ${cryptoName}\nCurrent price: $${formatNumber(currentPrice)}\n\nEnter target price:`);
+    
+    if (newPrice === null) return; // User cancelled
+    
+    const targetPrice = parseFloat(newPrice);
+    if (isNaN(targetPrice) || targetPrice <= 0) {
+        showErrorToast('Please enter a valid price');
+        return;
+    }
+    
+    const alertType = targetPrice > currentPrice ? 'above' : 'below';
+    
+    // Update watchlist item
+    const watchlist = getWatchlist();
+    const itemIndex = watchlist.findIndex(item => item.id === cryptoId);
+    
+    if (itemIndex !== -1) {
+        watchlist[itemIndex].priceAlert = targetPrice;
+        watchlist[itemIndex].alertType = alertType;
+        saveWatchlist(watchlist);
+        
+        showSuccessToast(`Price alert set for ${cryptoName} at $${formatNumber(targetPrice)}`);
+        loadWatchlistData(); // Refresh display
+    }
+}
+
+// Utility function: Format number (reuse from crypto.js logic)
+function formatNumber(num) {
+    if (!num) return '0';
+    
+    if (num >= 1) {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 6
+        }).format(num);
+    } else {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 6,
+            maximumFractionDigits: 8
+        }).format(num);
+    }
+}

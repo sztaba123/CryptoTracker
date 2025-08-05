@@ -297,6 +297,283 @@
     background: rgba(139, 92, 246, 0.8);
 }
 
+/* Watchlist Section */
+.watchlist-section {
+    padding: 2rem 0 4rem 0;
+}
+
+.watchlist-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.watchlist-title {
+    color: #ffffff;
+    font-weight: 600;
+    margin: 0;
+}
+
+.watchlist-actions .btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.watchlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.watchlist-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.watchlist-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #8b5cf6, #3b82f6, #06b6d4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.watchlist-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.watchlist-item:hover::before {
+    opacity: 1;
+}
+
+.watchlist-crypto-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.watchlist-crypto-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 1rem;
+    object-fit: cover;
+}
+
+.watchlist-crypto-info h5 {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.watchlist-crypto-info .crypto-symbol {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.watchlist-price-info {
+    margin-bottom: 1rem;
+}
+
+.current-price {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.price-change {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    display: inline-block;
+    margin-top: 0.3rem;
+}
+
+.price-change.positive {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.price-change.negative {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.watchlist-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.watchlist-stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.watchlist-stat .label {
+    color: #64748b;
+    font-size: 0.75rem;
+    margin-bottom: 0.2rem;
+}
+
+.watchlist-stat .value {
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.price-alert-info {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.price-alert-info.no-alert {
+    background: rgba(100, 116, 139, 0.1);
+    border-color: rgba(100, 116, 139, 0.2);
+}
+
+.alert-text {
+    color: #fbbf24;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.alert-text.no-alert {
+    color: #64748b;
+}
+
+.watchlist-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-remove {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border: none;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.btn-remove:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-edit-alert {
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    border: none;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.btn-edit-alert:hover {
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.empty-state i {
+    opacity: 0.5;
+}
+
+.empty-state h4,
+.empty-state p {
+    color: #64748b;
+}
+
+/* Performance Indicators */
+.performance-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.performance-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.performance-badge.profit {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+}
+
+.performance-badge.loss {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.performance-badge.neutral {
+    background: rgba(100, 116, 139, 0.2);
+    color: #64748b;
+}
+
+/* Responsive Watchlist */
+@media (max-width: 768px) {
+    .watchlist-card {
+        padding: 1.5rem;
+    }
+    
+    .watchlist-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .watchlist-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    
+    .watchlist-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .watchlist-stats {
+        grid-template-columns: 1fr;
+        gap: 0.3rem;
+    }
+}
+
 /* Edit Profile Modal Styles */
 .edit-profile-container {
     position: fixed;
@@ -478,6 +755,201 @@
     }
     
     .edit-profile-modal .btn {
+        margin: 0;
+    }
+}
+
+/* Reset Password Modal Styles */
+.reset-password-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.reset-password-container.hide {
+    display: none !important;
+    opacity: 0;
+}
+
+.reset-password-container.show {
+    display: flex !important;
+    opacity: 1;
+    animation: fadeInModal 0.3s ease-out;
+}
+
+.reset-password-modal {
+    background: linear-gradient(135deg, #0f0f23 0%, #1e1e3f 60%, #2d1b69 100%);
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 450px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.reset-password-container.show .reset-password-modal {
+    transform: scale(1);
+}
+
+.reset-password-modal .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.reset-password-modal .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f87171;
+}
+
+.reset-password-modal h3 {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.reset-password-modal .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.reset-password-modal label {
+    color: #cbd5e1;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.reset-password-modal input[type="password"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.reset-password-modal input[type="password"]:focus {
+    outline: none;
+    border-color: rgba(251, 191, 36, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+}
+
+.reset-password-modal input[type="password"]::placeholder {
+    color: #64748b;
+}
+
+.reset-password-modal .modal-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.reset-password-modal .btn {
+    flex: 1;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.reset-password-modal .btn-primary {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #ffffff;
+}
+
+.reset-password-modal .btn-primary:hover {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+}
+
+.reset-password-modal .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.reset-password-modal .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Password strength indicator */
+.password-strength {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.password-strength.weak {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+}
+
+.password-strength.medium {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+}
+
+.password-strength.strong {
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+}
+
+/* Responsive Reset Password Modal */
+@media (max-width: 768px) {
+    .reset-password-container {
+        padding: 1rem;
+    }
+    
+    .reset-password-modal {
+        padding: 2rem;
+        max-width: 100%;
+    }
+    
+    .reset-password-modal .modal-buttons {
+        flex-direction: column;
+    }
+    
+    .reset-password-modal .btn {
         margin: 0;
     }
 }

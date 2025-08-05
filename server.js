@@ -177,3 +177,68 @@ app.post('/api/login', async (req, res) => {
         });
     }
 });
+
+// API - Change password
+app.post('/api/change-password', async (req, res) => {
+    try {
+        const { email, oldPassword, newPassword } = req.body;
+        
+        // Walidacja danych
+        if (!email || !oldPassword || !newPassword) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Email, old password and new password are required' 
+            });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'New password must be at least 6 characters long' 
+            });
+        }
+
+        if (oldPassword === newPassword) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'New password must be different from old password' 
+            });
+        }
+
+        // Znajdź użytkownika
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
+        }
+
+        // Sprawdź stare hasło
+        if (user.password !== oldPassword) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Invalid old password' 
+            });
+        }
+
+        // Zaktualizuj hasło
+        user.password = newPassword; // W produkcji należy zahashować!
+        user.passwordChangedAt = new Date();
+        await user.save();
+
+        console.log('✅ Password changed for user:', user.username);
+
+        res.json({ 
+            success: true, 
+            message: 'Password changed successfully'
+        });
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error'
+        });
+    }
+});

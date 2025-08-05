@@ -159,6 +159,55 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Watchlist Section -->
+        <div class="watchlist-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="watchlist-card">
+                            <div class="watchlist-header d-flex justify-content-between align-items-center mb-4">
+                                <h3 class="watchlist-title">
+                                    <i class="bi bi-heart-fill me-2"></i>
+                                    My Watchlist
+                                </h3>
+                                <div class="watchlist-actions">
+                                    <button id="refresh-watchlist" class="btn btn-outline-primary btn-sm me-2">
+                                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                                    </button>
+                                    <a href="crypto.html" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-plus-circle me-1"></i>Add More
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Watchlist Loading -->
+                            <div id="watchlist-loading" class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2 text-muted">Loading your watchlist...</p>
+                            </div>
+                            
+                            <!-- Empty Watchlist -->
+                            <div id="empty-watchlist" class="empty-state text-center py-5 d-none">
+                                <i class="bi bi-heart display-1 text-muted mb-3"></i>
+                                <h4 class="text-muted">Your watchlist is empty</h4>
+                                <p class="text-muted mb-4">Start tracking your favorite cryptocurrencies</p>
+                                <a href="crypto.html" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>Browse Cryptocurrencies
+                                </a>
+                            </div>
+                            
+                            <!-- Watchlist Grid -->
+                            <div id="watchlist-grid" class="watchlist-grid">
+                                <!-- Watchlist items will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <footer class="text-center p-3 p-md-4">

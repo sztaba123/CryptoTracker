@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptocurrencies - CryptoTracker</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/crypto.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/register.css">
+    <link rel="stylesheet" href="css/alerts.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <!-- Logo + Brand (zawsze widoczne) -->
+                <div class="navbar-brand d-flex align-items-center">
+                    <i id="logo" class="bi bi-cash-coin text-light me-3"></i>
+                    <h1 class="mb-0">CryptoTracker</h1>
+                </div>
+                
+                <!-- Hamburger button (widoczny tylko na mobile) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Collapsible content -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <!-- Menu (centrum) -->
+                    <ul class="navbar-nav mx-auto text-center mb-3 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="about.html">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light active" href="crypto.html">Cryptocurrencies</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="contact.html">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="profile.html">Profile</a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Login/Register buttons lub User dropdown (prawa strona na desktop, wyśrodkowane na mobile) -->
+                    <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center justify-content-lg-start ms-lg-auto auth-buttons">
+                        <button class="btn me-lg-3 mb-2 mb-lg-0 login" id="login-btn">Login</button>
+                        <button class="btn btn-signup" id="sign-up-btn">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="crypto-main">
+        <!-- Hero Section -->
+        <div class="crypto-hero">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <h1 class="hero-title mb-4">
+                            <i class="bi bi-currency-bitcoin me-3"></i>
+                            Explore Cryptocurrencies
+                        </h1>
+                        <p class="hero-subtitle mb-5">
+                            Track, analyze, and monitor your favorite cryptocurrencies in real-time. 
+                            Add coins to your watchlist and never miss important price movements.
+                        </p>
+                        
+                        <!-- Search and Filter Bar -->
+                        <div class="search-filter-container">
+                            <div class="row g-3 justify-content-center">
+                                <div class="col-md-6">
+                                    <div class="search-box">
+                                        <i class="bi bi-search"></i>
+                                        <input type="text" id="crypto-search" placeholder="Search cryptocurrencies..." 
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <select id="sort-select" class="form-select">
+                                        <option value="market_cap_desc">Market Cap ↓</option>
+                                        <option value="market_cap_asc">Market Cap ↑</option>
+                                        <option value="price_desc">Price ↓</option>
+                                        <option value="price_asc">Price ↑</option>
+                                        <option value="percent_change_desc">24h Change ↓</option>
+                                        <option value="percent_change_asc">24h Change ↑</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <button id="refresh-data" class="btn btn-primary w-100">
+                                        <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Stats -->
+        <div class="market-stats">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="total-market-cap">Loading...</h3>
+                                <p>Total Market Cap</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="total-volume">Loading...</h3>
+                                <p>24h Volume</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="btc-dominance">Loading...</h3>
+                                <p>BTC Dominance</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-collection"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="active-cryptos">Loading...</h3>
+                                <p>Active Cryptocurrencies</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cryptocurrencies List -->
+        <div class="crypto-list-section">
+            <div class="container">
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="section-title">
+                        <i class="bi bi-list-ul me-2"></i>
+                        Cryptocurrency Prices
+                    </h2>
+                    <div class="view-options">
+                        <button id="view-grid" class="btn btn-outline-primary btn-sm me-2 active">
+                            <i class="bi bi-grid-3x3"></i>
+                        </button>
+                        <button id="view-list" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-list"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="loading-spinner" class="text-center py-5">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Loading cryptocurrency data...</p>
+                </div>
+
+                <!-- Error Message -->
+                <div id="error-message" class="alert alert-danger d-none" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <span id="error-text">Failed to load cryptocurrency data. Please try again.</span>
+                    <button id="retry-btn" class="btn btn-outline-danger btn-sm ms-3">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Retry
+                    </button>
+                </div>
+
+                <!-- Crypto Grid View -->
+                <div id="crypto-grid" class="crypto-grid">
+                    <!-- Crypto cards will be inserted here -->
+                </div>
+
+                <!-- Crypto Table View -->
+                <div id="crypto-table" class="crypto-table d-none">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>24h Change</th>
+                                    <th>Market Cap</th>
+                                    <th>Volume (24h)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crypto-table-body">
+                                <!-- Table rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container d-flex justify-content-center mt-5">
+                    <nav aria-label="Crypto pagination">
+                        <ul class="pagination pagination-dark" id="crypto-pagination">
+                            <!-- Pagination will be inserted here -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center p-3 p-md-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-1">&copy; 2023 CryptoTracker</p>
+                    <p class="mb-0">Powered by CoinGecko API</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="footer-links">
+                        <a href="index.html" class="text-light me-3">Home</a>
+                        <a href="about.html" class="text-light me-3">About</a>
+                        <a href="crypto.html" class="text-light me-3">Cryptocurrencies</a>
+                        <a href="contact.html" class="text-light me-3">Contact</a>
+                        <a href="profile.html" class="text-light">Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add to Watchlist Modal -->
+    <div class="add-watchlist-container hide">
+        <div class="add-watchlist-modal">
+            <button type="button" class="close-btn">&times;</button>
+            <h3>Add to Watchlist</h3>
+            
+            <div class="crypto-info">
+                <img id="modal-crypto-logo" src="" alt="" class="crypto-logo">
+                <div class="crypto-details">
+                    <h4 id="modal-crypto-name">Bitcoin</h4>
+                    <p id="modal-crypto-symbol">BTC</p>
+                    <p class="current-price">$<span id="modal-crypto-price">0</span></p>
+                </div>
+            </div>
+            
+            <form class="watchlist-form">
+                <div class="form-group">
+                    <label for="price-alert">Set Price Alert (optional):</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" id="price-alert" step="0.01" placeholder="Enter target price">
+                    </div>
+                    <small class="form-text">Get notified when the price reaches this level</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="alert-type">Alert Type:</label>
+                    <select id="alert-type" class="form-select">
+                        <option value="above">When price goes above</option>
+                        <option value="below">When price goes below</option>
+                    </select>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+                    <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/alerts.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/signup.js"></script>
+    <script src="js/crypto.js"></script>
+
+    <script>
+        // Initialize crypto page and authentication
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAuth();
+            initializeCrypto();
+        });
+    </script>
+    
+</body>
+</html>
