@@ -115,20 +115,27 @@ async function loadMarketStats() {
 
 // Update market statistics display
 function updateMarketStats(data) {
+    console.log('Market stats data received:', data);
+    
+    if (!data) {
+        console.warn('No market stats data available');
+        return;
+    }
+    
     const totalMarketCap = document.getElementById('total-market-cap');
     const totalVolume = document.getElementById('total-volume');
     const btcDominance = document.getElementById('btc-dominance');
     const activeCryptos = document.getElementById('active-cryptos');
     
-    if (totalMarketCap && data.total_market_cap) {
+    if (totalMarketCap && data.total_market_cap && data.total_market_cap.usd) {
         totalMarketCap.textContent = formatCurrency(data.total_market_cap.usd, true);
     }
     
-    if (totalVolume && data.total_volume) {
+    if (totalVolume && data.total_volume && data.total_volume.usd) {
         totalVolume.textContent = formatCurrency(data.total_volume.usd, true);
     }
     
-    if (btcDominance && data.market_cap_percentage) {
+    if (btcDominance && data.market_cap_percentage && data.market_cap_percentage.btc) {
         btcDominance.textContent = data.market_cap_percentage.btc.toFixed(1) + '%';
     }
     
@@ -163,6 +170,11 @@ function displayGridView(data) {
         const card = createCryptoCard(crypto);
         gridContainer.appendChild(card);
     });
+    
+    // Initialize charts after grid is created
+    setTimeout(() => {
+        initializeCharts();
+    }, 100);
 }
 
 // Display table view
@@ -213,6 +225,15 @@ function createCryptoCard(crypto) {
             ${changeIcon} ${crypto.price_change_percentage_24h.toFixed(2)}%
         </div>
         
+        <div class="mini-chart-container">
+            <div id="mini-chart-${crypto.id}" class="mini-chart">
+                <div class="chart-placeholder">
+                    <i class="bi bi-graph-up-arrow text-muted"></i>
+                    <small class="text-muted">Chart loading...</small>
+                </div>
+            </div>
+        </div>
+        
         <div class="crypto-stats">
             <div class="crypto-stat">
                 <span class="label">Market Cap</span>
@@ -235,6 +256,9 @@ function createCryptoCard(crypto) {
         <div class="crypto-actions">
             <button class="${watchlistClass}" onclick="toggleWatchlist('${crypto.id}', '${crypto.name}', '${crypto.symbol}', '${crypto.image}', ${crypto.current_price})">
                 <i class="bi ${watchlistIcon} me-2"></i>${watchlistText}
+            </button>
+            <button class="btn btn-outline-primary btn-sm ms-2" onclick="showChartModal('${crypto.id}', '${crypto.name}', '${crypto.symbol}')">
+                <i class="bi bi-graph-up me-1"></i>Chart
             </button>
         </div>
     `;
@@ -275,6 +299,9 @@ function createCryptoTableRow(crypto, rank) {
         <td>
             <button class="${watchlistClass}" onclick="toggleWatchlist('${crypto.id}', '${crypto.name}', '${crypto.symbol}', '${crypto.image}', ${crypto.current_price})">
                 ${watchlistText}
+            </button>
+            <button class="btn btn-outline-primary btn-sm ms-1" onclick="showChartModal('${crypto.id}', '${crypto.name}', '${crypto.symbol}')">
+                <i class="bi bi-graph-up"></i>
             </button>
         </td>
     `;
@@ -639,3 +666,140 @@ function debounce(func, wait) {
 window.initializeCrypto = initializeCrypto;
 window.toggleWatchlist = toggleWatchlist;
 window.changePage = changePage;
+window.showChartModal = showChartModal;
+
+// Chart functionality
+let cryptoCharts = null;
+
+// Initialize charts after data is loaded
+function initializeCharts() {
+    if (typeof CryptoCharts !== 'undefined') {
+        cryptoCharts = new CryptoCharts();
+        
+        // Create mini charts for only first 5 cryptos to avoid API rate limits
+        const limitedCryptos = cryptoData.slice(0, 5);
+        
+        limitedCryptos.forEach((crypto, index) => {
+            setTimeout(() => {
+                cryptoCharts.createMiniChart(`mini-chart-${crypto.id}`, crypto.id);
+            }, index * 600); // 600ms delay between each chart
+        });
+    }
+}
+
+// Show chart modal for detailed analysis
+function showChartModal(cryptoId, cryptoName, cryptoSymbol) {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('chart-modal');
+    if (!modal) {
+        modal = createChartModal();
+        document.body.appendChild(modal);
+    }
+    
+    // Update modal content
+    const modalTitle = modal.querySelector('.modal-title');
+    const chartContainer = modal.querySelector('#modal-chart-container');
+    
+    modalTitle.textContent = `${cryptoName} (${cryptoSymbol.toUpperCase()}) Price Chart`;
+    chartContainer.innerHTML = '<div id="modal-chart"></div>';
+    
+    // Initialize chart
+    if (cryptoCharts) {
+        // Show modal first, then create chart after it's fully shown
+        const bootstrapModal = new bootstrap.Modal(modal);
+        
+        // Listen for modal shown event
+        modal.addEventListener('shown.bs.modal', function() {
+            console.log('Modal shown, creating chart for:', cryptoId);
+            
+            // Double check that container exists and is visible
+            const chartContainer = document.getElementById('modal-chart');
+            console.log('Chart container in modal:', !!chartContainer);
+            
+            if (chartContainer) {
+                // Add a small delay to ensure everything is rendered
+                setTimeout(() => {
+                    cryptoCharts.createPriceChart('modal-chart', cryptoId, '7d');
+                }, 200);
+            } else {
+                console.error('Modal chart container not found!');
+            }
+        }, { once: true }); // Use once to avoid multiple listeners
+        
+        bootstrapModal.show();
+    } else {
+        // If cryptoCharts not available, still show modal
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
+    }
+}
+
+// Create chart modal HTML
+function createChartModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.id = 'chart-modal';
+    modal.setAttribute('tabindex', '-1');
+    modal.setAttribute('aria-labelledby', 'chart-modal-label');
+    modal.setAttribute('aria-hidden', 'true');
+    
+    modal.innerHTML = `
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chart-modal-label">Cryptocurrency Chart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="chart-controls mb-3">
+                        <div class="btn-group" role="group" aria-label="Timeframe">
+                            <button type="button" class="btn btn-outline-primary active" onclick="updateModalChart('24h')">24H</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="updateModalChart('7d')">7D</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="updateModalChart('30d')">30D</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="updateModalChart('90d')">90D</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="updateModalChart('1y')">1Y</button>
+                        </div>
+                    </div>
+                    <div id="modal-chart-container" class="chart-container">
+                        <div id="modal-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    return modal;
+}
+
+// Update modal chart with different timeframe
+function updateModalChart(timeframe) {
+    console.log('Updating modal chart with timeframe:', timeframe);
+    
+    // Update active button
+    const buttons = document.querySelectorAll('#chart-modal .chart-controls .btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Get current crypto ID from modal
+    const modalTitle = document.querySelector('#chart-modal .modal-title').textContent;
+    console.log('Modal title:', modalTitle);
+    const cryptoMatch = modalTitle.match(/\(([A-Z]+)\)/);
+    if (cryptoMatch) {
+        const symbol = cryptoMatch[1].toLowerCase();
+        console.log('Found symbol:', symbol);
+        // Find crypto ID by symbol
+        const crypto = cryptoData.find(c => c.symbol.toLowerCase() === symbol);
+        console.log('Found crypto:', crypto);
+        if (crypto && cryptoCharts) {
+            console.log('Updating chart for:', crypto.id, 'timeframe:', timeframe);
+            cryptoCharts.updateChart('modal-chart', crypto.id, timeframe);
+        } else {
+            console.error('Crypto not found or cryptoCharts not available');
+        }
+    } else {
+        console.error('Could not extract symbol from modal title');
+    }
+}
+
+// Make chart functions globally available
+window.updateModalChart = updateModalChart;

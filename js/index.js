@@ -13,8 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize animations
     initializeAnimations();
     
-    // Update market statistics
-    updateMarketStats();
+    // Update market statistics (only on non-crypto pages)
+    if (!window.location.pathname.includes('crypto.html')) {
+        updateMarketStats();
+    }
     
     // Auto-refresh prices every 30 seconds
     setInterval(updateAllPrices, 30000);
