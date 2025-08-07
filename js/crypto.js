@@ -72,13 +72,54 @@ async function loadCryptoData() {
         // Using CoinGecko API (free tier)
         const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=${sortBy}&per_page=${itemsPerPage}&page=${currentPage}&sparkline=false&price_change_percentage=24h`;
         
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Try multiple endpoints to avoid CORS issues
+        const endpoints = [
+            url,
+            `https://cors-anywhere.herokuapp.com/${url}`,
+            `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
+        ];
+
+        let response = null;
+        let data = null;
+
+        for (const endpoint of endpoints) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
+                response = await fetch(endpoint, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'cors',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    const responseData = await response.json();
+                    
+                    // Handle different response formats
+                    if (responseData.contents) {
+                        data = JSON.parse(responseData.contents);
+                    } else {
+                        data = responseData;
+                    }
+                    break;
+                }
+            } catch (error) {
+                console.warn(`Failed to fetch from ${endpoint}:`, error);
+                continue;
+            }
         }
         
-        const data = await response.json();
+        if (!response || !response.ok || !data) {
+            throw new Error(`HTTP error! status: ${response ? response.status : 'No response'}`);
+        }
+        
         cryptoData = data;
         
         console.log('Crypto data loaded:', data.length, 'coins');
@@ -102,8 +143,51 @@ async function loadCryptoData() {
 // Load market statistics
 async function loadMarketStats() {
     try {
-        const response = await fetch('https://api.coingecko.com/api/v3/global');
-        const data = await response.json();
+        const url = 'https://api.coingecko.com/api/v3/global';
+        
+        // Try multiple endpoints to avoid CORS issues
+        const endpoints = [
+            url,
+            `https://cors-anywhere.herokuapp.com/${url}`,
+            `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
+        ];
+
+        let response = null;
+        let data = null;
+
+        for (const endpoint of endpoints) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+                response = await fetch(endpoint, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'cors',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    const responseData = await response.json();
+                    
+                    // Handle different response formats
+                    if (responseData.contents) {
+                        data = JSON.parse(responseData.contents);
+                    } else {
+                        data = responseData;
+                    }
+                    break;
+                }
+            } catch (error) {
+                console.warn(`Failed to fetch market stats from ${endpoint}:`, error);
+                continue;
+            }
+        }
         
         if (data && data.data) {
             updateMarketStats(data.data);

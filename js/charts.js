@@ -8,12 +8,50 @@ class CryptoCharts {
         this.failedFetches = new Set(); // Track failed API calls
         this.rateLimitDelay = 500; // 500ms between API calls
         this.lastFetchTime = 0;
+        this.availableProxies = []; // Track working proxies
         this.init();
     }
 
     init() {
         console.log('Crypto Charts system initialized');
         this.loadChartJS();
+        this.testProxyAvailability();
+    }
+
+    // Test proxy availability
+    async testProxyAvailability() {
+        const proxies = [
+            { name: 'cors-anywhere', url: 'https://cors-anywhere.herokuapp.com/' },
+            { name: 'allorigins', url: 'https://api.allorigins.win/get?url=' }
+        ];
+
+        for (const proxy of proxies) {
+            try {
+                const testUrl = proxy.name === 'allorigins' 
+                    ? `${proxy.url}${encodeURIComponent('https://api.coingecko.com/api/v3/ping')}`
+                    : `${proxy.url}https://api.coingecko.com/api/v3/ping`;
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+                const response = await fetch(testUrl, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    mode: 'cors'
+                });
+
+                clearTimeout(timeoutId);
+
+                if (response.ok) {
+                    this.availableProxies.push(proxy);
+                    console.log(`Proxy ${proxy.name} is available`);
+                }
+            } catch (error) {
+                console.warn(`Proxy ${proxy.name} is not available:`, error);
+            }
+        }
+
+        console.log(`Available proxies: ${this.availableProxies.length}`);
     }
 
     // Load Chart.js library dynamically
@@ -35,6 +73,10 @@ class CryptoCharts {
     // Create price chart for a cryptocurrency
     async createPriceChart(containerId, cryptoId, timeframe = '7d') {
         console.log('Creating price chart for:', { containerId, cryptoId, timeframe });
+        
+        // Store current crypto ID for mock data generation
+        this.currentCryptoId = cryptoId;
+        
         try {
             await this.loadChartJS();
             
@@ -51,6 +93,7 @@ class CryptoCharts {
                     <div class="text-center">
                         <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
                         <p class="text-muted">Loading chart data...</p>
+                        <small class="text-muted">Attempting multiple data sources...</small>
                     </div>
                 </div>
             `;
@@ -183,15 +226,65 @@ class CryptoCharts {
                     interval = 'hourly';
             }
 
-            const response = await fetch(
-                `https://api.coingecko.com/api/v3/coins/${cryptoId}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`
-            );
+            // Try multiple endpoints to avoid CORS issues
+            const endpoints = [
+                `https://api.coingecko.com/api/v3/coins/${cryptoId}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`,
+                `https://cors-anywhere.herokuapp.com/https://api.coingecko.com/api/v3/coins/${cryptoId}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`,
+                `https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.coingecko.com/api/v3/coins/${cryptoId}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`)}`
+            ];
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch chart data: ${response.status}`);
+            let response = null;
+            let lastError = null;
+
+            for (const endpoint of endpoints) {
+                try {
+                    // Add timeout to prevent hanging
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+                    response = await fetch(endpoint, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        mode: 'cors',
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (response.ok) {
+                        break;
+                    }
+                } catch (error) {
+                    console.warn(`Failed to fetch from ${endpoint}:`, error);
+                    lastError = error;
+                    continue;
+                }
             }
 
-            const data = await response.json();
+            if (!response || !response.ok) {
+                throw new Error(`Failed to fetch chart data: ${response ? response.status : 'No response'} - ${lastError?.message || 'Unknown error'}`);
+            }
+
+            let data;
+            const contentType = response.headers.get('content-type');
+            
+            // Handle different response formats (direct API vs proxy)
+            if (contentType && contentType.includes('application/json')) {
+                const responseData = await response.json();
+                
+                // Check if it's from allorigins proxy
+                if (responseData.contents) {
+                    data = JSON.parse(responseData.contents);
+                } else {
+                    data = responseData;
+                }
+            } else {
+                throw new Error('Invalid response format');
+            }
+
             return data.prices || [];
 
         } catch (error) {
@@ -204,6 +297,7 @@ class CryptoCharts {
 
     // Generate mock price data when API fails
     generateMockData(timeframe) {
+        console.log(`Generating mock data for timeframe: ${timeframe}`);
         const now = Date.now();
         let dataPoints = 168; // Default for 7d hourly
         let interval = 60 * 60 * 1000; // 1 hour
@@ -232,7 +326,29 @@ class CryptoCharts {
         }
 
         const mockData = [];
-        let basePrice = 50000; // Base price for simulation
+        // Base prices for different cryptocurrencies
+        const basePrices = {
+            'bitcoin': 45000,
+            'ethereum': 3000,
+            'binancecoin': 300,
+            'cardano': 0.5,
+            'solana': 100,
+            'polkadot': 15,
+            'dogecoin': 0.08,
+            'avalanche-2': 50,
+            'polygon': 1.2,
+            'chainlink': 15
+        };
+        
+        let basePrice = 50000; // Default
+        
+        // Try to get realistic base price for known cryptos
+        for (const [cryptoName, price] of Object.entries(basePrices)) {
+            if (this.currentCryptoId && this.currentCryptoId.includes(cryptoName)) {
+                basePrice = price;
+                break;
+            }
+        }
         
         for (let i = dataPoints - 1; i >= 0; i--) {
             const timestamp = now - (i * interval);
@@ -240,9 +356,14 @@ class CryptoCharts {
             const volatility = 0.02; // 2% volatility
             const change = (Math.random() - 0.5) * 2 * volatility;
             basePrice = basePrice * (1 + change);
+            
+            // Ensure price doesn't go negative
+            basePrice = Math.max(basePrice, 0.0001);
+            
             mockData.push([timestamp, basePrice]);
         }
 
+        console.log(`Generated ${mockData.length} mock data points`);
         return mockData;
     }
 
@@ -322,13 +443,22 @@ class CryptoCharts {
                     display: false
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(15, 15, 35, 0.95)',
-                    titleColor: '#f8fafc',
-                    bodyColor: '#e2e8f0',
-                    borderColor: 'rgba(124, 58, 237, 0.6)',
-                    borderWidth: 1,
-                    cornerRadius: 8,
+                    backgroundColor: 'rgba(15, 15, 35, 0.98)',
+                    titleColor: '#ffffff',
+                    bodyColor: '#f1f5f9',
+                    borderColor: 'rgba(124, 58, 237, 0.8)',
+                    borderWidth: 2,
+                    cornerRadius: 12,
                     displayColors: false,
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 16,
+                        weight: '600'
+                    },
+                    padding: 12,
                     callbacks: {
                         title: (context) => {
                             // For linear scale, we need to get the timestamp from the data point
@@ -356,7 +486,11 @@ class CryptoCharts {
                         drawBorder: false
                     },
                     ticks: {
-                        color: '#9ca3af',
+                        color: '#cbd5e1',
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        },
                         maxTicksLimit: timeframe === '24h' ? 6 : 8,
                         callback: function(value, index, values) {
                             // Show only some labels to avoid crowding
@@ -375,7 +509,11 @@ class CryptoCharts {
                         drawBorder: false
                     },
                     ticks: {
-                        color: '#9ca3af',
+                        color: '#cbd5e1',
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        },
                         callback: (value) => '$' + this.formatNumber(value)
                     }
                 }
@@ -439,8 +577,49 @@ class CryptoCharts {
     // Update chart title with crypto info
     async updateChartTitle(cryptoId, timeframe) {
         try {
-            const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd&include_24hr_change=true`);
-            const data = await response.json();
+            // Try multiple endpoints to avoid CORS issues
+            const endpoints = [
+                `https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd&include_24hr_change=true`,
+                `https://cors-anywhere.herokuapp.com/https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd&include_24hr_change=true`,
+                `https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd&include_24hr_change=true`)}`
+            ];
+
+            let response = null;
+            let data = null;
+
+            for (const endpoint of endpoints) {
+                try {
+                    response = await fetch(endpoint, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        mode: 'cors'
+                    });
+                    
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        
+                        // Handle different response formats
+                        if (responseData.contents) {
+                            data = JSON.parse(responseData.contents);
+                        } else {
+                            data = responseData;
+                        }
+                        break;
+                    }
+                } catch (error) {
+                    console.warn(`Failed to fetch price from ${endpoint}:`, error);
+                    continue;
+                }
+            }
+
+            if (!data) {
+                console.warn('Could not fetch current price data, using fallback');
+                return;
+            }
+
             const cryptoData = data[cryptoId];
 
             if (cryptoData) {
@@ -463,6 +642,14 @@ class CryptoCharts {
             }
         } catch (error) {
             console.error('Error updating chart title:', error);
+            // Set fallback title
+            const titleElement = document.getElementById(`chart-title-${cryptoId}`);
+            const subtitleElement = document.getElementById(`chart-subtitle-${cryptoId}`);
+            
+            if (titleElement && subtitleElement) {
+                titleElement.innerHTML = 'Price Chart';
+                subtitleElement.innerHTML = `${this.getTimeframeLabel(timeframe)}`;
+            }
         }
     }
 

@@ -39,13 +39,16 @@
                             <a class="nav-link text-light" href="index.html">Home</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-light" href="crypto.html">Crypto</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-light" href="about.html">About</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-light" href="contact.html">Contact</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" href="profile.html">Profile</a>
+                            <a class="nav-link text-light active" href="profile.html">Profile</a>
                         </li>
                     </ul>
                     
@@ -298,6 +301,47 @@
                 </div>
                 <div class="modal-buttons">
                     <button type="submit" class="btn btn-primary">Reset Password</button>
+                    <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Price Alert Modal -->
+    <div class="price-alert-container hide">
+        <div class="price-alert-modal">
+            <button type="button" class="close-btn">&times;</button>
+            <h3>Set Price Alert</h3>
+            
+            <div class="crypto-info">
+                <img id="alert-crypto-logo" src="" alt="" class="crypto-logo">
+                <div class="crypto-details">
+                    <h4 id="alert-crypto-name">Bitcoin</h4>
+                    <p id="alert-crypto-symbol">BTC</p>
+                    <p class="current-price">Current price: $<span id="alert-crypto-price">0</span></p>
+                </div>
+            </div>
+            
+            <form class="price-alert-form">
+                <div class="form-group">
+                    <label for="alert-target-price">Enter target price:</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" id="alert-target-price" step="0.01" placeholder="Enter target price" required>
+                    </div>
+                    <small class="form-text">Get notified when the price reaches this level</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="alert-direction">Alert Type:</label>
+                    <select id="alert-direction" class="form-select">
+                        <option value="above">When price goes above</option>
+                        <option value="below">When price goes below</option>
+                    </select>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Set Alert</button>
                     <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
                 </div>
             </form>

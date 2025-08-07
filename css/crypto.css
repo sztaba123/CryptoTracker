@@ -474,15 +474,18 @@
     color: #ffffff;
     text-align: center;
     margin-bottom: 2rem;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .crypto-info {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.2rem;
     margin-bottom: 2rem;
 }
 
@@ -496,17 +499,20 @@
 .crypto-details h4 {
     color: #ffffff;
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .crypto-details p {
-    color: #94a3b8;
-    margin: 0.2rem 0;
-    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin: 0.3rem 0;
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
 .current-price {
-    color: #22c55e !important;
+    color: #10b981 !important;
     font-weight: 700 !important;
     font-size: 1.1rem !important;
 }
@@ -516,42 +522,62 @@
 }
 
 .watchlist-form label {
-    color: #cbd5e1;
-    font-weight: 500;
+    color: #f1f5f9;
+    font-weight: 600;
     margin-bottom: 0.5rem;
     display: block;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .watchlist-form input,
 .watchlist-form select {
     width: 100%;
     padding: 0.8rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 10px;
     color: #ffffff;
     font-size: 1rem;
+    font-weight: 500;
     transition: all 0.3s ease;
+}
+
+.watchlist-form select option {
+    background: #1e1e3f;
+    color: #ffffff;
+    padding: 0.5rem;
+}
+
+.watchlist-form input::placeholder {
+    color: #94a3b8;
+    opacity: 1;
+}
+
+.watchlist-form select:invalid {
+    color: #94a3b8;
 }
 
 .watchlist-form input:focus,
 .watchlist-form select:focus {
     outline: none;
-    border-color: rgba(139, 92, 246, 0.5);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    border-color: rgba(139, 92, 246, 0.6);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    color: #ffffff;
 }
 
 .input-group-text {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #e2e8f0;
+    font-weight: 600;
 }
 
 .form-text {
-    color: #64748b;
-    font-size: 0.8rem;
+    color: #94a3b8;
+    font-size: 0.85rem;
     margin-top: 0.5rem;
+    font-weight: 500;
 }
 
 .modal-buttons {

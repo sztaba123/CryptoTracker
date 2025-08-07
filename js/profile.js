@@ -920,43 +920,8 @@ function removeFromWatchlist(cryptoId, cryptoName) {
 }
 
 function editPriceAlert(cryptoId, cryptoName, currentPrice) {
-    const newPrice = prompt(`Set price alert for ${cryptoName}\nCurrent price: $${formatNumber(currentPrice)}\n\nEnter target price:`);
-    
-    if (newPrice === null) return; // User cancelled
-    
-    const targetPrice = parseFloat(newPrice);
-    if (isNaN(targetPrice) || targetPrice <= 0) {
-        showErrorToast('Please enter a valid price');
-        return;
-    }
-    
-    const alertType = targetPrice > currentPrice ? 'above' : 'below';
-    
-    // Update watchlist item
-    const watchlist = getWatchlist();
-    const itemIndex = watchlist.findIndex(item => item.id === cryptoId);
-    
-    if (itemIndex !== -1) {
-        watchlist[itemIndex].priceAlert = targetPrice;
-        watchlist[itemIndex].alertType = alertType;
-        saveWatchlist(watchlist);
-        
-        // Add notification about alert update
-        if (window.priceMonitor) {
-            window.priceMonitor.addNotification({
-                type: 'info',
-                title: 'Price Alert Updated',
-                message: `Price alert for ${cryptoName} has been set to $${formatNumber(targetPrice)} (${alertType} current price).`,
-                cryptoId: cryptoId,
-                cryptoName: cryptoName,
-                timestamp: Date.now(),
-                read: false
-            });
-        }
-        
-        showSuccessToast(`Price alert set for ${cryptoName} at $${formatNumber(targetPrice)}`);
-        loadWatchlistData(); // Refresh display
-    }
+    // Show custom modal instead of browser prompt
+    showPriceAlertModal(cryptoId, cryptoName, currentPrice);
 }
 
 // Utility function: Format number (reuse from crypto.js logic)
@@ -974,4 +939,122 @@ function formatNumber(num) {
             maximumFractionDigits: 8
         }).format(num);
     }
+}
+
+// Price Alert Modal Functions
+function showPriceAlertModal(cryptoId, cryptoName, currentPrice) {
+    const modal = document.querySelector('.price-alert-container');
+    const form = modal.querySelector('.price-alert-form');
+    
+    // Populate modal with crypto data
+    document.getElementById('alert-crypto-name').textContent = cryptoName;
+    document.getElementById('alert-crypto-symbol').textContent = cryptoId.toUpperCase();
+    document.getElementById('alert-crypto-price').textContent = formatNumber(currentPrice);
+    
+    // Set crypto logo (try to get from existing data or use placeholder)
+    const logoElement = document.getElementById('alert-crypto-logo');
+    const existingCryptoCard = document.querySelector(`[data-crypto-id="${cryptoId}"]`);
+    if (existingCryptoCard) {
+        const existingLogo = existingCryptoCard.querySelector('.crypto-logo');
+        if (existingLogo) {
+            logoElement.src = existingLogo.src;
+            logoElement.alt = cryptoName;
+        }
+    } else {
+        // Fallback to CoinGecko logo URL pattern
+        logoElement.src = `https://assets.coingecko.com/coins/images/1/small/${cryptoId}.png`;
+        logoElement.alt = cryptoName;
+    }
+    
+    // Clear previous form data
+    document.getElementById('alert-target-price').value = '';
+    document.getElementById('alert-direction').value = 'above';
+    
+    // Auto-update alert direction based on target price
+    const targetPriceInput = document.getElementById('alert-target-price');
+    const alertDirectionSelect = document.getElementById('alert-direction');
+    
+    targetPriceInput.addEventListener('input', () => {
+        const inputPrice = parseFloat(targetPriceInput.value);
+        if (!isNaN(inputPrice)) {
+            alertDirectionSelect.value = inputPrice > currentPrice ? 'above' : 'below';
+        }
+    });
+    
+    // Show modal
+    modal.classList.remove('hide');
+    modal.classList.add('show');
+    
+    // Handle form submission
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        const targetPrice = parseFloat(document.getElementById('alert-target-price').value);
+        const alertType = document.getElementById('alert-direction').value;
+        
+        if (isNaN(targetPrice) || targetPrice <= 0) {
+            showErrorToast('Please enter a valid price');
+            return;
+        }
+        
+        // Update watchlist item
+        const watchlist = getWatchlist();
+        const itemIndex = watchlist.findIndex(item => item.id === cryptoId);
+        
+        if (itemIndex !== -1) {
+            watchlist[itemIndex].priceAlert = targetPrice;
+            watchlist[itemIndex].alertType = alertType;
+            saveWatchlist(watchlist);
+            
+            // Add notification about alert update
+            if (window.priceMonitor) {
+                window.priceMonitor.addNotification({
+                    type: 'info',
+                    title: 'Price Alert Updated',
+                    message: `Price alert for ${cryptoName} has been set to $${formatNumber(targetPrice)} (${alertType} current price).`,
+                    cryptoId: cryptoId,
+                    cryptoName: cryptoName,
+                    timestamp: Date.now(),
+                    read: false
+                });
+            }
+            
+            showSuccessToast(`Price alert set for ${cryptoName} at $${formatNumber(targetPrice)}`);
+            loadWatchlistData(); // Refresh display
+        }
+        
+        // Hide modal
+        hidePriceAlertModal();
+        
+        // Remove event listener
+        form.removeEventListener('submit', handleSubmit);
+    };
+    
+    // Add event listener
+    form.addEventListener('submit', handleSubmit);
+    
+    // Handle close button
+    const closeBtn = modal.querySelector('.close-btn');
+    const cancelBtn = modal.querySelector('.btn-cancel');
+    
+    const hideModal = () => {
+        hidePriceAlertModal();
+        form.removeEventListener('submit', handleSubmit);
+    };
+    
+    closeBtn.onclick = hideModal;
+    cancelBtn.onclick = hideModal;
+    
+    // Handle click outside modal
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            hideModal();
+        }
+    };
+}
+
+function hidePriceAlertModal() {
+    const modal = document.querySelector('.price-alert-container');
+    modal.classList.remove('show');
+    modal.classList.add('hide');
 }
